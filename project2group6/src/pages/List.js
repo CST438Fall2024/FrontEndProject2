@@ -26,13 +26,18 @@ const List = () => {
                     items.map((item, index) => (
                         <div key={index} className="item">
                             {item}
+                            <button onClick={() => alert('Edit clicked!')}>Edit</button>
+                            <button onClick={() => alert('Remove clicked')}>Add</button>
                         </div>
                     ))
                 ) : (
                     <p>No items available</p>
                 )}
+                <button onClick={() => alert('Add button Clicked')}>Add</button>
             </div>
         </div>
+
+    
     );
 };
 
