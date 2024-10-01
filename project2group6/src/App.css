@@ -1,20 +1,22 @@
+/* Overall layout for the entire webpage */
 .App {
   text-align: center;
   padding: 50px;
 }
 
+/* A div box that contains all of the sign up forms */
 .loginSignup {
   display:flex;
   justify-content: space-between;
   width:100%;
 }
-
+/* The separate forms */
 .login, .signup, .Google {
-  width: 30%;
+  width: 25%;
   text-align: center;
   justify-content: center;
   align-items: center;
   display: grid;
   border: 15px solid #200;
-  padding: 20px; 
+  padding: 50px; 
 }
