@@ -1,4 +1,5 @@
 import './App.css';
+import axios from 'axios';
 // The landing page which has the forms for the login/signup elements
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
 }
 
 function login() {
+  window.location.href = './list.js';
   console.log("You've clicked the login button!");
 }
 
