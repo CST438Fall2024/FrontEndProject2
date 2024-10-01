@@ -33,6 +33,7 @@ function App() {
 }
 
 function login() {
+  window.location.href = './list.html';
   console.log("You've clicked the login button!");
 }
 
