@@ -1,10 +1,15 @@
 import './App.css';
-
+import {useNavigate, Routes, Route} from 'react-router-dom';
 import List from './pages/List';
 import AddItem from './pages/AddItem'
 // The landing page which has the forms for the login/signup elements
 function App() {
- 
+
+  const navigate = useNavigate();
+
+  const handleNavigation = (path) => {
+  navigate(path);
+ };
 
   return (
     

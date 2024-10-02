@@ -1,9 +1,10 @@
 import React from 'react';
 import '../css/AddItem.css'
+import Layout from '../Layout'
 function AddItem(){
     return(
-        <div className="addSection">
-
+        <div className="container">
+        <Layout>
         {/* Add a list */}
         <div className="addList">
             <h2>Add a List</h2>
@@ -13,6 +14,7 @@ function AddItem(){
         <div className="addItem">
             <h2>Add an Item</h2>
         </div>
+        </Layout>
         </div>
     );
 }

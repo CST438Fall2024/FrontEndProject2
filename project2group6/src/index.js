@@ -11,6 +11,8 @@ import Layout from "./Layout"
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
+
+  // for navigation
   <React.StrictMode>
     <BrowserRouter>
       <Routes>

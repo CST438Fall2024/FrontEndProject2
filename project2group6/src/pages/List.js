@@ -29,7 +29,8 @@ const List = () => {
 
         <div className="container">
             <Layout>
-            <h1>Wishlist / Item List</h1>
+            <h1>Wishlist / Item List <button onClick={() => handleNavigation('/add-item')}>Add</button> </h1>
+            
             <div className="item-list">
                 {items.length > 0 ? (
                     items.map((item, index) => (
@@ -42,7 +43,7 @@ const List = () => {
                 ) : (
                     <p>No items available</p>
                 )}
-                <button onClick={() => handleNavigation('/add-item')}>Add</button>
+                
             </div>
             </Layout>
         </div>
