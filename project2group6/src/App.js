@@ -1,7 +1,13 @@
 import './App.css';
+
+import List from './pages/List';
+import AddItem from './pages/AddItem'
 // The landing page which has the forms for the login/signup elements
 function App() {
+ 
+
   return (
+    
     <div className="App">
     <h1>Let's Make a Wishlist!</h1>
     <div className = "loginSignup">
@@ -30,6 +36,7 @@ function App() {
     </div>
     </div>
   );
+  
 }
 
 function login() {
@@ -40,5 +47,6 @@ function signup() {
   login();
   console.log("You've clicked the signup button!");
 }
+
 
 export default App;
