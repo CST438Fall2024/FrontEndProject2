@@ -2,25 +2,16 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
+import App from './pages/App';
 import List from './pages/List';
-import AddItem from './pages/AddItem'
-import App from './App';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import Layout from "./Layout"
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+
 root.render(
 
   // for navigation
   <React.StrictMode>
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<App />} />
-        <Route path="/list" element={<List />} />
-        <Route path="/add-item" element={<AddItem />} />
-      </Routes>
-    </BrowserRouter>
+    <List/>
   </React.StrictMode>
 );
 
