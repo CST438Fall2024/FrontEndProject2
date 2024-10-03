@@ -8,8 +8,8 @@ function App() {
   const navigate = useNavigate();
   const [data, setData] = useState(null);
   const databaseUrl = 'jdbc:mysql://c584md9egjnm02sk.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/v4hbf09hn2uv0gfc?useSSL=false&serverTimezone=UTC';
-  const [username, getUsername, setUsername] = useState('');
-  const [password, getPassword, setPassword] = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
 
   useEffect(() => {
@@ -60,8 +60,8 @@ function App() {
         {/* Login container */}
         <div className="login">
           <h3>Login?</h3>
-          <input type="text" placeholder="Username" value= {username} onChange = {(e) => getUsername(e.target.value)}/>
-          <input type="password" placeholder="Password" value = {password} onChange = {(e) => getPassword(e.target.value)}/>
+          <input type="text" placeholder="Username" value= {username} onChange = {(e) => setUsername(e.target.value)}/>
+          <input type="password" placeholder="Password" value = {password} onChange = {(e) => setPassword(e.target.value)}/>
           
           <button onClick={login}>Login</button>
         </div>
