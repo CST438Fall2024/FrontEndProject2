@@ -1,0 +1,17 @@
+
+.container {
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    height: 100vh;
+  }
+  
+  .profileCard {
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    width: 300px;
+    margin: 0 auto;
+  }
+  

@@ -1,19 +1,22 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import App from './pages/App';
 import List from './pages/List';
-import AddItem from './pages/AddItem';
+import AddItem from './pages/AddItem'
 import Profile from './pages/Profile'
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Layout from "./Layout"
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
 
   // for navigation
   <React.StrictMode>
-    <BrowserRouter>
+      <BrowserRouter>
       <Routes>
         <Route path="/" element={<App />} />
         <Route path="/list" element={<List />} />
