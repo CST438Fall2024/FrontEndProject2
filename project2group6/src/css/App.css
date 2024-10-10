@@ -12,11 +12,11 @@
 }
 /* The separate forms */
 .login, .signup, .Google {
-  width: 25%;
   text-align: center;
   justify-content: center;
   align-items: center;
   display: grid;
   border: 15px solid #200;
   padding: 50px; 
+  margin: 20px;
 }
