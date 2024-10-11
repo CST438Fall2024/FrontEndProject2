@@ -14,6 +14,7 @@ const Layout = ({ children }) => {
       <div className="header">
                 <button className="btn btn-primary" onClick={() => handleNavigation('/')}>Home</button>
                 <p className="fs-1">WEBSITE NAME</p>
+                <button className="btn btn-primary"onClick={() => handleNavigation('/admin')}>Admin</button>
                 <button className="btn btn-primary"onClick={() => handleNavigation('/profile')}>Profile</button>
             </div>
       <main>{children}</main>

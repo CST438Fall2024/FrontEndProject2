@@ -9,6 +9,7 @@ import Profile from './pages/Profile'
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Layout from "./Layout"
+import Admin from "./pages/Admin"
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -22,6 +23,7 @@ root.render(
         <Route path="/list" element={<List />} />
         <Route path="/add-item" element={<AddItem />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/admin" element={<Admin />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
