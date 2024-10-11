@@ -8,14 +8,16 @@ function Profile() {
   const [editMode, setEditMode] = useState(false);
   const [updatedUser, setUpdatedUser] = useState({ username: '', email: '', password: '' });
 
-  /*http://localhost:8080/api/users/1 PLACEHOLDER UNTIL BACKEND RUNS/IS FIXED */
-  
+  /*http://localhost:8080/users PLACEHOLDER UNTIL BACKEND RUNS/IS FIXED */
+
   // fetch data
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/api/users/1');
-        const fetchedUser = response.data;
+        const response = await axios.get('http://localhost:8080/users/all');
+        const allUsers = response.data;
+
+        const fetchedUser = allUsers.find(user => user.userID === 2);
         setUser({
           username: fetchedUser.username || 'no username',
           email: fetchedUser.email || 'No email provided',

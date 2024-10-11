@@ -1,13 +1,13 @@
-/* AddItem.css */
+
 .formContainer {
     display: flex;
     justify-content: space-between;
-    gap: 20px; /* Space between the two forms */
+    gap: 20px;
     padding: 20px;
   }
   
   .addList, .addItem {
-    width: 45%; /* Make the forms take equal space */
+    width: 45%;
     border: 1px solid #ccc;
     border-radius: 8px;
     padding: 20px;
