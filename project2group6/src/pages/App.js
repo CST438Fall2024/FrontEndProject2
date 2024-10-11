@@ -50,7 +50,6 @@ function App() {
       alert('Passwords do not match');
       return;
     }
-
     try {
       const response = await axios.post(`${databaseUrl}add`, {
         username,
@@ -64,6 +63,14 @@ function App() {
       alert('Something went wrong during signup.');
     }
   };
+
+  function onSignIn(googleUser) {
+    var profile = googleUser.getBasicProfile();
+    console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+    console.log('Name: ' + profile.getName());
+    console.log('Image URL: ' + profile.getImageUrl());
+    console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+  }
 
   return (
     <div className="App">
@@ -96,7 +103,7 @@ function App() {
         <div className="Google col-md-3 border p-4">
           <h3>Google</h3>
           <h4>You can use Google to sign up or log in!</h4>
-          <button className="btn btn-danger">Google Login</button>
+          <div class="g-signin2" data-onsuccess="onSignIn">Google</div>
         </div>
 
         {/* Signup container */}
