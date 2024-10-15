@@ -10,9 +10,9 @@ function App() {
   const [setData] = useState(null);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState(''); // Added confirmPassword state
-  const [email, setEmail] = useState('');
-  const databaseUrl = 'http://localhost:8080/users/';
+  const databaseUrl = '"proxy": "https://mysterious-brook-69944-1a2d962c192a.herokuapp.com"';
 
   // Fetching data on component mount
   useEffect(() => {
@@ -25,7 +25,23 @@ function App() {
       }
     };
     fetchData();
+
+    const loadGapi = () => {
+      if (window.gapi) {
+        window.gapi.load('auth2', () => {
+          window.gapi.auth2.init({
+            client_id: '497722883096-d2i832qs7k7oamjuv62kcre3somnh9ig.apps.googleusercontent.com',
+          });
+        })
+      }
+      else {
+        console.error('gapi is not loaded');
+      }
+    };
+    loadGapi();
+
   }, []);
+
 
   // Login function, navigates to the list page
   const login = async () => {
@@ -53,7 +69,6 @@ function App() {
     try {
       const response = await axios.post(`${databaseUrl}add`, {
         username,
-        email,
         password,
       });
       if (response.status === 200) {
@@ -64,13 +79,23 @@ function App() {
     }
   };
 
-  function onSignIn(googleUser) {
-    var profile = googleUser.getBasicProfile();
-    console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
-    console.log('Name: ' + profile.getName());
-    console.log('Image URL: ' + profile.getImageUrl());
-    console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
-  }
+  const googlelogin = async (response) => {
+    if (response && response.credential) {
+      const idToken = response.credential;
+      try {
+        const res = await axios.post(`${databaseUrl}google-login`, { idToken: idToken });
+        if (res.status === 200) {
+          navigate('/list');
+        }
+        else {
+          alert('login failed');
+        }
+      }
+      catch (error) {
+        alert('Something went wrong with the google login');
+      }
+    }
+  };
 
   return (
     <div className="App">
@@ -103,19 +128,12 @@ function App() {
         <div className="Google col-md-3 border p-4">
           <h3>Google</h3>
           <h4>You can use Google to sign up or log in!</h4>
-          <div class="g-signin2" data-onsuccess="onSignIn">Google</div>
+          <div id="googleLoginButton" className="g_id_signin" data-client_id="497722883096-d2i832qs7k7oamjuv62kcre3somnh9ig.apps.googleusercontent.com" data-callback={googlelogin} data-auto_prompt="false"></div>
         </div>
 
         {/* Signup container */}
         <div className="signup col-md-3 border p-4">
           <h3>Signup?</h3>
-          <input
-            type="text"
-            placeholder="Email"
-            className="form-control mb-2"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
           <input
             type="text"
             placeholder="Username"
