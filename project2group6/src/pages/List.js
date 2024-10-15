@@ -15,7 +15,7 @@ const List = () => {
   useEffect(() => {
     const fetchWishlists = async () => {
       try {
-        const response = await axios.get(`/wishlists/info/${userID}`);
+        const response = await axios.get(`/wishlists/all`);//info/${userID}
         setWishlists(response.data);
         setLoading(false);
       } catch (error) {
