@@ -8,31 +8,34 @@ function Profile() {
   const [editMode, setEditMode] = useState(false);
   const [updatedUser, setUpdatedUser] = useState({ username: '', email: '', password: '' });
 
-  /*http://localhost:8080/users PLACEHOLDER UNTIL BACKEND RUNS/IS FIXED */
 
   // fetch data
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/users/all');
+        const response = await axios.get('/users/all');
         const allUsers = response.data;
-
+  
         const fetchedUser = allUsers.find(user => user.userID === 2);
-        setUser({
-          username: fetchedUser.username || 'no username',
-          email: fetchedUser.email || 'No email provided',
-          password: '', // won't show
-        });
-        setUpdatedUser({
-          username: fetchedUser.username || '',
-          email: fetchedUser.email || '',
-          password: '',
-        });
+        if (fetchedUser) {
+          setUser({
+            username: fetchedUser.username || 'no username',
+            email: fetchedUser.email || 'No email provided',
+            password: '', // don't display password
+          });
+          setUpdatedUser({
+            username: fetchedUser.username || '',
+            email: fetchedUser.email || '',
+            password: '',
+          });
+        } else {
+          console.warn('User not found');
+        }
       } catch (error) {
         console.error('Error fetching user data:', error);
       }
     };
-
+  
     fetchUser();
   }, []);
 
