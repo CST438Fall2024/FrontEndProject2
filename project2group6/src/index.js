@@ -4,17 +4,28 @@ import './index.css';
 import reportWebVitals from './reportWebVitals';
 import App from './pages/App';
 import List from './pages/List';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import AddItem from './pages/AddItem'
+import Profile from './pages/Profile'
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Layout from "./Layout"
+import Admin from "./pages/Admin"
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
+
+  // for navigation
   <React.StrictMode>
-  <Router>
-    <Routes>
-      <Route exact path="/" element={<App/>} />
-      <Route exact path="/list" element={<List/>}/>
-    </Routes>
-  </Router>
+      <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<App />} />
+        <Route path="/list" element={<List />} />
+        <Route path="/add-item" element={<AddItem />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/admin" element={<Admin />} />
+      </Routes>
+    </BrowserRouter>
   </React.StrictMode>
 );
 
