@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../css/App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import NavigationLayout from '../partials/Navigation';
 
 function App() {
   // Will be used for the sessions for
@@ -109,7 +108,6 @@ function App() {
   return (
     <div className="App">
       <h1>Let's Make a Wishlist!</h1>
-      <NavigationLayout admin = {false}/>
       <div className="loginSignup row justify-content-between">
 
         {/* Login container */}
