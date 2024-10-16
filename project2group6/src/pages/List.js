@@ -15,7 +15,7 @@ const List = () => {
   useEffect(() => {
     const fetchWishlists = async () => {
       try {
-        const response = await axios.get(`/wishlists/all`);//info/${userID}
+        const response = await axios.get(`/wishlists/by/2`); // hardcoded
         setWishlists(response.data);
         setLoading(false);
       } catch (error) {
@@ -35,6 +35,11 @@ const List = () => {
     navigate(path);
   };
 
+  // navigate to the specific wishlist page
+  const goToWishlist = (wishlistID) => {
+    navigate(`/wishlist/${wishlistID}`);
+  };
+
   return (
     <div className="container">
       <Layout>
@@ -51,10 +56,17 @@ const List = () => {
           ) : wishlists.length > 0 ? (
             wishlists.map((wishlist, index) => (
               <div key={index} className="item">
-                <strong>{wishlist.wishlistName}</strong> {/* name */}
-                <p>{wishlist.description}</p> {/* discription */}
-                <button onClick={() => alert(`Edit ${wishlist.wishlistID} clicked!`)}>Edit</button>
-                <button onClick={() => alert(`Remove ${wishlist.wishlistID} clicked!`)}>Remove</button>
+                {/* Navigate to wishlist page on name click */}
+                <strong 
+                  onClick={() => goToWishlist(wishlist.wishlistID)}
+                  style={{ cursor: 'pointer', color: 'blue' }}
+                >
+                  {wishlist.wishlistName}
+                </strong>
+                <div className="button-container">
+                  <button onClick={() => alert(`Edit wishlistID:${wishlist.wishlistID} with userID:${userID} clicked!`)}>Edit</button>
+                  <button onClick={() => alert(`Remove ${wishlist.wishlistID} clicked!`)}>Remove</button>
+                </div>
               </div>
             ))
           ) : (

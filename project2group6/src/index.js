@@ -10,6 +10,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Layout from "./Layout"
 import Admin from "./pages/Admin"
+import ListContent from './pages/ListContent';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -24,6 +25,7 @@ root.render(
         <Route path="/add-item" element={<AddItem />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/admin" element={<Admin />} />
+        <Route path="/wishlist/:wishlistID" element={<ListContent />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
