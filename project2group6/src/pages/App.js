@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../css/App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import NavigationLayout from '../partials/Navigation';
 
 function App() {
   // Will be used for the sessions for
@@ -20,7 +21,7 @@ function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`/users/all`);
+        const response = await axios.get(`${databaseUrl}all`);
         setData(response.data);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -44,6 +45,7 @@ function App() {
 
   // Login function, navigates to the list page
   const login = async () => {
+    setLoading(true);
     try {
       const response = await axios.post(`${databaseUrl}login`, {
         username,
@@ -52,6 +54,7 @@ function App() {
       if (response.status === 200) {
         const token = response.data.token; // Get the token from the server response
         localStorage.setItem("sessionToken", token); // Store token in localStorage
+        localStorage.setItem("isAdmin", response.data.admin);
         navigate('/list');
       } else {
         alert('Invalid credentials. Please try again.');
@@ -63,6 +66,7 @@ function App() {
 
   // Signup function, checks password confirmation before signing up
   const signup = async () => {
+    setLoading(true);
     if (password !== confirmPassword) {
       alert('Passwords do not match');
       return;
@@ -84,6 +88,7 @@ function App() {
 
   // Google login function
   const googlelogin = async (response) => {
+    setLoading(true);
     if (response && response.credential) {
       const idToken = response.credential;
       try {
@@ -104,6 +109,7 @@ function App() {
   return (
     <div className="App">
       <h1>Let's Make a Wishlist!</h1>
+      <NavigationLayout admin = {false}/>
       <div className="loginSignup row justify-content-between">
 
         {/* Login container */}
