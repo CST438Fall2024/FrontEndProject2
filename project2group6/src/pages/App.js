@@ -47,21 +47,39 @@ function App() {
     setLoading(true);
     try {
       const response = await axios.post(`${databaseUrl}login`, {
-        username,
-        password,
-      });
-      if (response.status === 200) {
-        const token = response.data.token; // Get the token from the server response
-        localStorage.setItem("sessionToken", token); // Store token in localStorage
-        localStorage.setItem("isAdmin", response.data.admin);
-        navigate('/list');
-      } else {
-        alert('Invalid credentials. Please try again.');
+      username,
+      password,
+  });
+  console.log(response);
+  if(response.status === 200) {
+    const userResponse = await axios.get(`${databaseUrl}all`);
+    const user = userResponse.data.find(u => u.username === username);
+
+    if(user) 
+      {
+        const token = "token";
+        const admin = user.admin;
+        localStorage.setItem('token', token);
+        localStorage.setItem('admin', admin);
+        console.log(token);
+        console.log(admin);
+        if(admin)
+        {
+          navigate('/admin');
+        }
+        else
+        {
+         navigate('/list'); 
+        }
       }
-    } catch (error) {
-      alert('Cannot login. An error occurred.');
-    }
-  };
+  }
+}catch(error){
+    console.log(error);
+  }
+  finally{
+    setLoading(false);
+  }
+};
 
   // Signup function, checks password confirmation before signing up
   const signup = async () => {
