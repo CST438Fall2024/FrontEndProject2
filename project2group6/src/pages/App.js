@@ -18,7 +18,7 @@ function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${databaseUrl}all`);
+        const response = await axios.get(`/users/all`);
         setData(response.data);
       } catch (error) {
         console.error('Error fetching data:', error);
