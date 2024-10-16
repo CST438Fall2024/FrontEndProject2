@@ -6,8 +6,10 @@ import '../css/App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
+  // Will be used for the sessions for
+  // localStorage.removeItem("sessionToken");
   const navigate = useNavigate();
-  const [setData] = useState(null);
+  const [data, setData] = useState(null);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -26,22 +28,19 @@ function App() {
     };
     fetchData();
 
-    // const loadGapi = () => {
-    //   if (window.gapi) {
-    //     window.gapi.load('auth2', () => {
-    //       window.gapi.auth2.init({
-    //         client_id: '497722883096-d2i832qs7k7oamjuv62kcre3somnh9ig.apps.googleusercontent.com',
-    //       });
-    //     })
-    //   }
-    //   else {
-    //     console.error('gapi is not loaded');
-    //   }
-    // };
-    // loadGapi();
-
+    const loadGapi = () => {
+      if (window.gapi) {
+        window.gapi.load('auth2', () => {
+          window.gapi.auth2.init({
+            client_id: '497722883096-d2i832qs7k7oamjuv62kcre3somnh9ig.apps.googleusercontent.com',
+          });
+        });
+      } else {
+        console.error('gapi is not loaded');
+      }
+    };
+    loadGapi();
   }, []);
-
 
   // Login function, navigates to the list page
   const login = async () => {
@@ -50,16 +49,18 @@ function App() {
         username,
         password,
       });
-      console.log(`${databaseUrl}login`);
       if (response.status === 200) {
+        const token = response.data.token; // Get the token from the server response
+        localStorage.setItem("sessionToken", token); // Store token in localStorage
         navigate('/list');
       } else {
         alert('Invalid credentials. Please try again.');
       }
     } catch (error) {
-      alert('Cannot login. An error occured.');
+      alert('Cannot login. An error occurred.');
     }
   };
+
   // Signup function, checks password confirmation before signing up
   const signup = async () => {
     if (password !== confirmPassword) {
@@ -73,26 +74,29 @@ function App() {
       });
       if (response.status === 200) {
         alert("You have signed in successfully");
+        const token = response.data.token; // Get the token from the server response
+        localStorage.setItem("sessionToken", token); // Store token in localStorage
       }
     } catch (error) {
       alert('Something went wrong during signup.');
     }
   };
 
+  // Google login function
   const googlelogin = async (response) => {
     if (response && response.credential) {
       const idToken = response.credential;
       try {
         const res = await axios.post(`${databaseUrl}google-login`, { idToken: idToken });
         if (res.status === 200) {
+          const token = res.data.token; // Get the token from the server response
+          localStorage.setItem("sessionToken", token); // Store token in localStorage
           navigate('/list');
+        } else {
+          alert('Login failed');
         }
-        else {
-          alert('login failed');
-        }
-      }
-      catch (error) {
-        alert('Something went wrong with the google login');
+      } catch (error) {
+        alert('Something went wrong with the Google login');
       }
     }
   };
