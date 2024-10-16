@@ -3,10 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import './css/Layout.css';
 
-const Layout = ({ admin, children }) => {
+const Layout = ({children }) => {
   // NAVIGATION
   const navigate = useNavigate();
-
+  const admin = JSON.parse(localStorage.getItem('admin'));
   const handleNavigation = (path) => {
     navigate(path);
   };
