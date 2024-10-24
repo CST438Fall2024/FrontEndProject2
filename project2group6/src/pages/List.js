@@ -8,6 +8,7 @@ const List = () => {
   const [wishlists, setWishlists] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [wishlistInfo, setWishlistInfo] = useState('');
 
   // temporary hardcoded until sessions
   const userID = 2;
@@ -54,6 +55,19 @@ const List = () => {
     }
   };
 
+  const handleEdit = async (wishlistID) => {
+    try 
+    {
+      const response = await axios.get(`/wishlist/info/${wishlistID}`);
+      setWishlistInfo(response.data);
+      console.log(response.data);
+    }
+    catch(error)
+    {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="container">
       <Layout>
@@ -78,7 +92,7 @@ const List = () => {
                   {wishlist.wishlistName}
                 </strong>
                 <div className="button-container">
-                  <button onClick={() => alert(`Edit wishlistID:${wishlist.wishlistID} with userID:${userID} clicked!`)}>Edit</button>
+                  <button onClick={() => handleEdit(wishlist.wishlistID)}>Edit</button>
                   <button onClick={() => handleDelete(wishlist.wishlistID)}>Remove</button>
                 </div>
               </div>

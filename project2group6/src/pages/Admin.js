@@ -34,55 +34,57 @@ function Admin() {
   const editUsers = async (users) => {
     try {
       let userId = users;
-
-      const response = await axios.get(`${databaseUrl}info/${userId}`);
-      setEditingUser(response.data);
-      setUsername(response.data.username);
-      setPassword(response.data.password);
-      setShowPopup(true);
+      if (!editingUser) {
+        const response = await axios.get(`${databaseUrl}info/${userId}`);
+        setEditingUser(response.data);
+        setUsername(response.data.username);
+        setPassword(response.data.password);
+        setShowPopup(true);
+      }
+      else {
+        const updateUser = await fetch(`${databaseUrl}edit`,
+          {
+            method: "PUT",
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({userID: userId, username: editUsername, password:editPassword})
+          });
+        setUsers(users.map(user => user.id === updateUser.id ? { ...user, ...updateUser } : user));
+        setShowPopup(false);
+        setEditingUser(null);
+      }
     }
     catch (error) {
       console.log(error);
     }
   };
 
-  const updateUser = async (userId) => {
-    await fetch(`${databaseUrl}edit`,
-      {
-        method: "PUT",
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ userID: userId, username: editUsername, password: editPassword })
-      });
-    setUsers(users.map(user => user.id === updateUser.id ? { ...user, ...updateUser } : user));
-    setEditingUser(null);
-  }
-
   const deleteUsers = async (users) => {
     try {
       let userId = users;
       const response = await fetch(`${databaseUrl}delete`,
+      {
+        method: "DELETE",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({userID: userId})
+      });
+      if(response.ok) 
         {
-          method: "DELETE",
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ userID: userId })
-        });
-      if (response.ok) {
-        setUsers((prevUsers) => prevUsers.filter((user) => user.userID !== userId));
-      }
-      else {
-        console.error(`Failed to delete user: ${userId}`);
-      }
+          setUsers((prevUsers) => prevUsers.filter((user) => user.userID !== userId));
+        }
+        else{
+          console.error(`Failed to delete user: ${userId}`);
+        }
     }
     catch (error) {
       console.error('There was an error deleting the user.');
     }
   };
   const Popup = () => {
-    const handleClose = () => { setShowPopup(false); setEditingUser(null); };
+    const handleClose = () => {setShowPopup(false); setEditingUser(null);};
     return (
       <Modal show={showPopup} onHide={handleClose}>
         <Modal.Header closeButton>
@@ -90,12 +92,12 @@ function Admin() {
         </Modal.Header>
         <Modal.Body>
           <input type="text" className="form-control" value={editUsername} onChange={(e) => setUsername(e.target.value)} placeholder="Enter Username" />
-          <input type="text" className="form-control" value={editPassword} onChange={(e) => setPassword(e.target.value)} placeholder="Enter Password" />
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="primary" onClick={() => updateUser(editingUser.userID)}>Save</Button>
-          <Button variant="secondary" onClick={handleClose}>Close</Button>
-        </Modal.Footer>
+          <input type="password" className="form-control" value={editPassword} onChange={(e) => setPassword(e.target.value)} placeholder="Enter Password" />
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="primary" onClick={() => editUsers(editingUser.userID)}>Save</Button>
+            <Button variant="secondary" onClick={handleClose}>Close</Button>
+          </Modal.Footer>
       </Modal>
     );
   };
@@ -126,7 +128,7 @@ function Admin() {
         <div className="item-list">
           {renderContent()}
         </div>
-        {showPopup && <Popup />}
+        {showPopup && <Popup/>}
       </Layout>
     </div>
   );
