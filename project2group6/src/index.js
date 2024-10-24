@@ -8,7 +8,6 @@ import AddItem from './pages/AddItem'
 import Profile from './pages/Profile'
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Layout from "./Layout"
 import Admin from "./pages/Admin"
 import ListContent from './pages/ListContent';
 

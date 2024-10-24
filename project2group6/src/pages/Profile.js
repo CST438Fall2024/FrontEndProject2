@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import Layout from '../Layout';
 import '../css/Profile.css';
 
 function Profile() {
-  const [user, setUser] = useState({ username: '', email: '', password: '' });
+  const [user, setUser] = useState({ username: '', password: '' });
   const [editMode, setEditMode] = useState(false);
-  const [updatedUser, setUpdatedUser] = useState({ username: '', email: '', password: '' });
-
+  const [updatedUser, setUpdatedUser] = useState({ username: '', password: '' });
+  const navigate = useNavigate();
 
   // fetch data
   useEffect(() => {
@@ -16,16 +17,14 @@ function Profile() {
         const response = await axios.get('/users/all');
         const allUsers = response.data;
   
-        const fetchedUser = allUsers.find(user => user.userID === 2);
+        const fetchedUser = allUsers.find(user => user.userID === 16);
         if (fetchedUser) {
           setUser({
             username: fetchedUser.username || 'no username',
-            email: fetchedUser.email || 'No email provided',
             password: '', // don't display password
           });
           setUpdatedUser({
             username: fetchedUser.username || '',
-            email: fetchedUser.email || '',
             password: '',
           });
         } else {
@@ -54,10 +53,40 @@ function Profile() {
   // save and update info
   const saveChanges = async () => {
     try {
-      setUser(updatedUser); //display updates
+      await axios.put(`/users/edit`, {
+        username: updatedUser.username,
+        password: updatedUser.password,
+        userID: 16
+      });
+
+      setUser(updatedUser);
       setEditMode(false);
     } catch (error) {
       console.error('Error saving user data:', error);
+      alert('Failed to save changes. Please try again.');
+    }
+  };
+
+  // logout function
+  const handleLogout = () => {
+    // for now, navigate to landing page
+    navigate('/');
+  };
+
+  // delete function
+  const handleDeleteAccount = async () => {
+    const confirmDelete = window.confirm('Are you sure you want to delete your account? This action cannot be undone.');
+    if (!confirmDelete) return;
+
+    try {
+      await axios.delete(`/users/delete`,{
+        userID: 16
+      });
+
+      navigate('/');
+    } catch (error) {
+      console.error('Error deleting account:', error);
+      alert('Failed to delete the account. Please try again.');
     }
   };
 
@@ -78,15 +107,6 @@ function Profile() {
                 />
               </div>
               <div className="profileField">
-                <label>Email: </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={updatedUser.email}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className="profileField">
                 <label>Password: </label>
                 <input
                   type="password"
@@ -101,8 +121,9 @@ function Profile() {
           ) : (
             <div>
               <p><strong>Username:</strong> {user.username}</p>
-              <p><strong>Email:</strong> {user.email}</p>
               <button onClick={handleEditClick}>Edit</button>
+              <button onClick={handleLogout}>Logout</button>
+              <button onClick={handleDeleteAccount} style={{ color: 'red' }}>Delete Account</button>
             </div>
           )}
         </div>
