@@ -6,13 +6,15 @@ import '../css/App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
+  // Will be used for the sessions for
+  // localStorage.removeItem("sessionToken");
   const navigate = useNavigate();
-  const [setData] = useState(null);
+  const [data, setData] = useState(null);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState(''); // Added confirmPassword state
-  const [email, setEmail] = useState('');
-  const databaseUrl = 'http://localhost:8080/users/';
+  const databaseUrl = '/users/';
 
   // Fetching data on component mount
   useEffect(() => {
@@ -25,27 +27,63 @@ function App() {
       }
     };
     fetchData();
+
+    const loadGapi = () => {
+      if (window.gapi) {
+        window.gapi.load('auth2', () => {
+          window.gapi.auth2.init({
+            client_id: '497722883096-d2i832qs7k7oamjuv62kcre3somnh9ig.apps.googleusercontent.com',
+          });
+        });
+      } else {
+        console.error('gapi is not loaded');
+      }
+    };
+    loadGapi();
   }, []);
 
   // Login function, navigates to the list page
   const login = async () => {
+    setLoading(true);
     try {
       const response = await axios.post(`${databaseUrl}login`, {
-        username,
-        password,
-      });
-      if (response.status === 200) {
-        navigate('/list');
-      } else {
-        alert('Invalid credentials. Please try again.');
+      username,
+      password,
+  });
+  console.log(response);
+  if(response.status === 200) {
+    const userResponse = await axios.get(`${databaseUrl}all`);
+    const user = userResponse.data.find(u => u.username === username);
+
+    if(user) 
+      {
+        const token = "token";
+        const admin = user.admin;
+        localStorage.setItem('token', token);
+        localStorage.setItem('admin', admin);
+        console.log(token);
+        console.log(admin);
+        if(admin)
+        {
+          navigate('/admin');
+        }
+        else
+        {
+         navigate('/list'); 
+        }
       }
-    } catch (error) {
-      alert('Something went wrong. Please try again.');
-    }
-  };
+  }
+}catch(error){
+    console.log(error);
+  }
+  finally{
+    setLoading(false);
+  }
+};
 
   // Signup function, checks password confirmation before signing up
   const signup = async () => {
+    setLoading(true);
     if (password !== confirmPassword) {
       alert('Passwords do not match');
       return;
@@ -53,24 +91,37 @@ function App() {
     try {
       const response = await axios.post(`${databaseUrl}add`, {
         username,
-        email,
         password,
       });
       if (response.status === 200) {
-        login(); // Automatically log in after signup
+        alert("You have signed in successfully");
+        const token = response.data.token; // Get the token from the server response
+        localStorage.setItem("sessionToken", token); // Store token in localStorage
       }
     } catch (error) {
       alert('Something went wrong during signup.');
     }
   };
 
-  function onSignIn(googleUser) {
-    var profile = googleUser.getBasicProfile();
-    console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
-    console.log('Name: ' + profile.getName());
-    console.log('Image URL: ' + profile.getImageUrl());
-    console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
-  }
+  // Google login function
+  const googlelogin = async (response) => {
+    setLoading(true);
+    if (response && response.credential) {
+      const idToken = response.credential;
+      try {
+        const res = await axios.post(`${databaseUrl}google-login`, { idToken: idToken });
+        if (res.status === 200) {
+          const token = res.data.token; // Get the token from the server response
+          localStorage.setItem("sessionToken", token); // Store token in localStorage
+          navigate('/list');
+        } else {
+          alert('Login failed');
+        }
+      } catch (error) {
+        alert('Something went wrong with the Google login');
+      }
+    }
+  };
 
   return (
     <div className="App">
@@ -103,19 +154,12 @@ function App() {
         <div className="Google col-md-3 border p-4">
           <h3>Google</h3>
           <h4>You can use Google to sign up or log in!</h4>
-          <div class="g-signin2" data-onsuccess="onSignIn">Google</div>
+          <div id="googleLoginButton" className="g_id_signin" data-client_id="497722883096-d2i832qs7k7oamjuv62kcre3somnh9ig.apps.googleusercontent.com" data-callback={googlelogin} data-auto_prompt="false"></div>
         </div>
 
         {/* Signup container */}
         <div className="signup col-md-3 border p-4">
           <h3>Signup?</h3>
-          <input
-            type="text"
-            placeholder="Email"
-            className="form-control mb-2"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
           <input
             type="text"
             placeholder="Username"
