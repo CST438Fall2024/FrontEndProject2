@@ -40,14 +40,13 @@ const List = () => {
     navigate(`/wishlist/${wishlistID}`);
   };
 
-  // Function to handle delete confirmation and API call
+  // delete a wishlist
   const handleDelete = async (wishlistID) => {
     const confirmDelete = window.confirm('Are you sure you want to delete this wishlist?');
     if (!confirmDelete) return;
 
     try {
       await axios.delete(`/wishlists/delete/${wishlistID}`);
-      // Update the local state after deletion
       setWishlists((prevWishlists) => prevWishlists.filter(wishlist => wishlist.wishlistID !== wishlistID));
     } catch (error) {
       console.error('Error deleting wishlist:', error);
