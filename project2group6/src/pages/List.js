@@ -6,8 +6,8 @@ import Layout from '../Layout';
 
 const List = () => {
   const [wishlists, setWishlists] = useState([]);
-  const [loading, setLoading] = useState(true); 
-  const [error, setError] = useState(null); 
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // temporary hardcoded until sessions
   const userID = 2;
@@ -40,6 +40,20 @@ const List = () => {
     navigate(`/wishlist/${wishlistID}`);
   };
 
+  // delete a wishlist
+  const handleDelete = async (wishlistID) => {
+    const confirmDelete = window.confirm('Are you sure you want to delete this wishlist?');
+    if (!confirmDelete) return;
+
+    try {
+      await axios.delete(`/wishlists/delete/${wishlistID}`);
+      setWishlists((prevWishlists) => prevWishlists.filter(wishlist => wishlist.wishlistID !== wishlistID));
+    } catch (error) {
+      console.error('Error deleting wishlist:', error);
+      setError('Failed to delete wishlist');
+    }
+  };
+
   return (
     <div className="container">
       <Layout>
@@ -65,7 +79,7 @@ const List = () => {
                 </strong>
                 <div className="button-container">
                   <button onClick={() => alert(`Edit wishlistID:${wishlist.wishlistID} with userID:${userID} clicked!`)}>Edit</button>
-                  <button onClick={() => alert(`Remove ${wishlist.wishlistID} clicked!`)}>Remove</button>
+                  <button onClick={() => handleDelete(wishlist.wishlistID)}>Remove</button>
                 </div>
               </div>
             ))
