@@ -50,7 +50,6 @@ const Layout = ({children }) => {
 };
 
 Layout.propTypes = {
-  admin: PropTypes.bool.isRequired,
   children: PropTypes.node,
 };
 
