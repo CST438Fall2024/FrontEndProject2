@@ -58,7 +58,7 @@ const List = () => {
   const handleEdit = async (wishlistID) => {
     try 
     {
-      const response = await axios.get(`/wishlist/info/${wishlistID}`);
+      const response = await axios.get(`/wishlists/info/${wishlistID}`);
       setWishlistInfo(response.data);
       console.log(response.data);
     }
