@@ -27,19 +27,6 @@ function App() {
       }
     };
     fetchData();
-
-    const loadGapi = () => {
-      if (window.gapi) {
-        window.gapi.load('auth2', () => {
-          window.gapi.auth2.init({
-            client_id: '497722883096-d2i832qs7k7oamjuv62kcre3somnh9ig.apps.googleusercontent.com',
-          });
-        });
-      } else {
-        console.error('gapi is not loaded');
-      }
-    };
-    loadGapi();
   }, []);
 
   // Login function, navigates to the list page
@@ -47,39 +34,34 @@ function App() {
     setLoading(true);
     try {
       const response = await axios.post(`${databaseUrl}login`, {
-      username,
-      password,
-  });
-  console.log(response);
-  if(response.status === 200) {
-    const userResponse = await axios.get(`${databaseUrl}all`);
-    const user = userResponse.data.find(u => u.username === username);
+        username,
+        password,
+      });
+      console.log(response);
+      if (response.status === 200) {
+        const userResponse = await axios.get(`${databaseUrl}all`);
+        const user = userResponse.data.find((u) => u.username === username);
 
-    if(user) 
-      {
-        const token = "token";
-        const admin = user.admin;
-        localStorage.setItem('token', token);
-        localStorage.setItem('admin', admin);
-        console.log(token);
-        console.log(admin);
-        if(admin)
-        {
-          navigate('/admin');
-        }
-        else
-        {
-         navigate('/list'); 
+        if (user) {
+          const token = "token";
+          const admin = user.admin;
+          localStorage.setItem('token', token);
+          localStorage.setItem('admin', admin);
+          console.log(token);
+          console.log(admin);
+          if (admin) {
+            navigate('/admin');
+          } else {
+            navigate('/list');
+          }
         }
       }
-  }
-}catch(error){
-    console.log(error);
-  }
-  finally{
-    setLoading(false);
-  }
-};
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Signup function, checks password confirmation before signing up
   const signup = async () => {
@@ -94,32 +76,12 @@ function App() {
         password,
       });
       if (response.status === 200) {
-        alert("You have signed in successfully");
+        alert('You have signed in successfully');
         const token = response.data.token; // Get the token from the server response
-        localStorage.setItem("sessionToken", token); // Store token in localStorage
+        localStorage.setItem('sessionToken', token); // Store token in localStorage
       }
     } catch (error) {
       alert('Something went wrong during signup.');
-    }
-  };
-
-  // Google login function
-  const googlelogin = async (response) => {
-    setLoading(true);
-    if (response && response.credential) {
-      const idToken = response.credential;
-      try {
-        const res = await axios.post(`${databaseUrl}google-login`, { idToken: idToken });
-        if (res.status === 200) {
-          const token = res.data.token; // Get the token from the server response
-          localStorage.setItem("sessionToken", token); // Store token in localStorage
-          navigate('/list');
-        } else {
-          alert('Login failed');
-        }
-      } catch (error) {
-        alert('Something went wrong with the Google login');
-      }
     }
   };
 
@@ -148,13 +110,6 @@ function App() {
           <button className="btn btn-primary" onClick={login}>
             Login
           </button>
-        </div>
-
-        {/* Google login container */}
-        <div className="Google col-md-3 border p-4">
-          <h3>Google</h3>
-          <h4>You can use Google to sign up or log in!</h4>
-          <div id="googleLoginButton" className="g_id_signin" data-client_id="497722883096-d2i832qs7k7oamjuv62kcre3somnh9ig.apps.googleusercontent.com" data-callback={googlelogin} data-auto_prompt="false"></div>
         </div>
 
         {/* Signup container */}
