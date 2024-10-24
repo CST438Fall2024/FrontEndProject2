@@ -11,7 +11,6 @@ const ListContent = () => {
   const [loading, setLoading] = useState(true); 
   const [error, setError] = useState(null); 
 
-
   useEffect(() => {
     const fetchWishlistInfo = async () => {
       try {
@@ -41,6 +40,22 @@ const ListContent = () => {
     navigate(path);
   };
 
+  // delete function
+  const handleDelete = async (itemID) => {
+    const confirmDelete = window.confirm('Are you sure you want to delete this item?');
+    if (!confirmDelete) return;
+
+    try {
+      await axios.delete(`/items/delete/${itemID}`);
+      
+      // update
+      setItems((prevItems) => prevItems.filter(item => item.itemID !== itemID));
+    } catch (error) {
+      console.error('Error deleting item:', error);
+      setError('Failed to delete the item. Please try again.');
+    }
+  };
+
   return (
     <Layout>
       <div className="list-content-container">
@@ -68,8 +83,8 @@ const ListContent = () => {
                 </p>
                 <p>Quantity: {item.itemQuantity}</p>
                 <div className="button-container">
-                  <button onClick={() => alert(`edit clicked`)}>Edit</button>
-                  <button onClick={() => alert(`remove clicked`)}>Remove</button>
+                  <button onClick={() => alert('edit clicked')}>Edit</button>
+                  <button onClick={() => handleDelete(item.itemID)}>Remove</button>
                 </div>
               </li>
             ))}
