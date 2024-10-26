@@ -3,7 +3,6 @@ import axios from 'axios';
 import '../css/List.css';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../Layout';
-import { Modal, Button } from "react-bootstrap";
 
 const List = () => {
   const [wishlists, setWishlists] = useState([]);
@@ -73,11 +72,10 @@ const List = () => {
   const handleEdit = async (wishlistID) => {
     try {
       await axios.put(`/wishlists/edit`, {
-        wishlistID: wishlists.wishlistID,
-        wishlistName,
+        wishlistID: currentWishlistID,
+        wishlistName: wishlistName,
         description: wishlistDescription,
       });
-
       setWishlists((prevWishlists) => 
         prevWishlists.map(wishlist => 
           wishlist.wishlistID === currentWishlistID 
