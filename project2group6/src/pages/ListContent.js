@@ -16,7 +16,6 @@ const ListContent = () => {
   const [loading, setLoading] = useState(true); 
   const [error, setError] = useState(null); 
   const [message, setMessage] = useState('');
-  const [currentItem, setCurrentItem] = useState(null);
   const [isEditing, setIsEditing] = useState(null);
 
   useEffect(() => {
@@ -30,11 +29,6 @@ const ListContent = () => {
         // get items
         const itemsResponse = await axios.get(`/wishlists/${wishlistID}/items`);
         setItems(itemsResponse.data); 
-        setItemName(itemsResponse.data.itemName);
-        setItemLink(itemsResponse.data.itemLink);
-        setItemQuantity(itemsResponse.data.itemQuantity);
-        console.log(itemLink);
-
         setLoading(false);
       } catch (err) {
         console.error('Error fetching wishlist and items:', err);
@@ -78,13 +72,15 @@ const ListContent = () => {
     }
   };
 
+
+  //Will reset the item form
   const resetItemForm = () => 
     {
       setItemName('');
         setItemLink('');
         setItemQuantity(1);
         setIsEditing(false);
-        setCurrentItem(null);
+        setItemId(null);
     }
   
      //Opens the edit Form
@@ -95,21 +91,22 @@ const ListContent = () => {
       setItemLink(item.itemLink);
       setItemQuantity(item.itemQuantity);
       setIsEditing(true);
-      setCurrentItem(item);
       };
   
     // Handles the edits for the wishlist
     const handleEdit = async () => {
       try {
-        await axios.put(`/items/edit`, {
-          itemId: itemId,
+        const response = await axios.put(`/items/edit`, {
           itemName: itemName,
           itemLink: itemLink,
           itemQuantity: itemQuantity,
+          itemID: itemId,
         });
-        alert("Item updated Successfully");
+        console.log(`Item Name: ${itemName}, Item Link: ${itemLink}, Item Quantitiy: ${itemQuantity}, Item ID: ${itemId}`);
+        console.log(response);
         resetItemForm();
         window.location.reload();
+        alert("Item updated Successfully");
       } catch (error) {
         console.log(error);
       }
@@ -153,7 +150,7 @@ const ListContent = () => {
           !loading && <p>No items found in this list.</p>
         )}
            {/* For Editing an Item */}
-           {isEditing && currentItem && (
+           {isEditing &&  (
           <div className="edit-form">
             <h2>Edit Item</h2>
             <input
