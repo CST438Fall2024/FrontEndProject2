@@ -3,13 +3,18 @@ import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import '../css/List.css';
 import Layout from '../Layout';
+import { Modal, Button } from "react-bootstrap";
 
 const ListContent = () => {
   const { wishlistID } = useParams(); 
   const [wishlist, setWishlist] = useState({}); 
   const [items, setItems] = useState([]); 
+  const [itemName, setItemName] = useState('');
+  const [itemLink, setItemLink] = useState('');
+  const [itemQuantity, setItemQuantity] = useState('');
   const [loading, setLoading] = useState(true); 
   const [error, setError] = useState(null); 
+  const user = JSON.parse(localStorage.getItem('user'));
 
   useEffect(() => {
     const fetchWishlistInfo = async () => {
@@ -17,10 +22,15 @@ const ListContent = () => {
         // get name and desc
         const wishlistResponse = await axios.get(`/wishlists/info/${wishlistID}`);
         setWishlist(wishlistResponse.data); 
+        
 
         // get items
         const itemsResponse = await axios.get(`/wishlists/${wishlistID}/items`);
         setItems(itemsResponse.data); 
+        setItemName(itemsResponse.data.itemName);
+        setItemLink(itemsResponse.data.itemLink);
+        setItemQuantity(itemsResponse.data.itemQuantity);
+        console.log(itemLink);
 
         setLoading(false);
       } catch (err) {
@@ -39,6 +49,15 @@ const ListContent = () => {
   const handleNavigation = (path) => {
     navigate(path);
   };
+
+  //Normalizing the Link
+  const normalize = (link) => {
+    if(!link.startsWith('http://') && !link.startsWith('https://'))
+    {
+      return `http://${link}`;
+    }
+    return link;
+  }
 
   // delete function
   const handleDelete = async (itemID) => {
@@ -79,7 +98,7 @@ const ListContent = () => {
               <li key={index} className="item">
                 <strong>{item.itemName}</strong>
                 <p>
-                  Link: <a href={item.itemLink}>{item.itemLink}</a>
+                  Link: <a href= {normalize(item.itemLink)} target="_blank" rel="noopener noreferrer">{item.itemLink}</a>
                 </p>
                 <p>Quantity: {item.itemQuantity}</p>
                 <div className="button-container">

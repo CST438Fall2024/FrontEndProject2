@@ -41,7 +41,7 @@ function App() {
       if (response.status === 200) {
         const userResponse = await axios.get(`${databaseUrl}all`);
         const user = userResponse.data.find((u) => u.username === username);
-
+        localStorage.setItem('user', JSON.stringify(user));
         if (user) {
           const token = "token";
           const admin = user.admin;
