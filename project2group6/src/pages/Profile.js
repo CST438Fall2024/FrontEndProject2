@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../Layout';
 import '../css/Profile.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function Profile() {
   const [user, setUser] = useState({ username: '', password: '' });

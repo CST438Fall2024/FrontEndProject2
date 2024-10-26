@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import '../css/List.css';
 import Layout from '../Layout';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const ListContent = () => {
   const { wishlistID } = useParams(); 
@@ -10,10 +11,13 @@ const ListContent = () => {
   const [items, setItems] = useState([]); 
   const [itemName, setItemName] = useState('');
   const [itemLink, setItemLink] = useState('');
+  const [itemId, setItemId] = useState('');
   const [itemQuantity, setItemQuantity] = useState('');
   const [loading, setLoading] = useState(true); 
   const [error, setError] = useState(null); 
-  const user = JSON.parse(localStorage.getItem('user'));
+  const [message, setMessage] = useState('');
+  const [currentItem, setCurrentItem] = useState(null);
+  const [isEditing, setIsEditing] = useState(null);
 
   useEffect(() => {
     const fetchWishlistInfo = async () => {
@@ -74,6 +78,44 @@ const ListContent = () => {
     }
   };
 
+  const resetItemForm = () => 
+    {
+      setItemName('');
+        setItemLink('');
+        setItemQuantity(1);
+        setIsEditing(false);
+        setCurrentItem(null);
+    }
+  
+     //Opens the edit Form
+     const openEdit = (item) => 
+      {
+      setItemId(item.itemID);
+      setItemName(item.itemName);
+      setItemLink(item.itemLink);
+      setItemQuantity(item.itemQuantity);
+      setIsEditing(true);
+      setCurrentItem(item);
+      };
+  
+    // Handles the edits for the wishlist
+    const handleEdit = async () => {
+      try {
+        await axios.put(`/items/edit`, {
+          itemId: itemId,
+          itemName: itemName,
+          itemLink: itemLink,
+          itemQuantity: itemQuantity,
+        });
+        alert("Item updated Successfully");
+        resetItemForm();
+        window.location.reload();
+      } catch (error) {
+        console.log(error);
+      }
+    };
+  
+
   return (
     <Layout>
       <div className="list-content-container">
@@ -101,7 +143,7 @@ const ListContent = () => {
                 </p>
                 <p>Quantity: {item.itemQuantity}</p>
                 <div className="button-container">
-                  <button onClick={() => alert('edit clicked')}>Edit</button>
+                  <button onClick={() => openEdit(item)}>Edit</button>
                   <button onClick={() => handleDelete(item.itemID)}>Remove</button>
                 </div>
               </li>
@@ -109,6 +151,43 @@ const ListContent = () => {
           </ul>
         ) : (
           !loading && <p>No items found in this list.</p>
+        )}
+           {/* For Editing an Item */}
+           {isEditing && currentItem && (
+          <div className="edit-form">
+            <h2>Edit Item</h2>
+            <input
+              type="text"
+              className="form-control"
+              value={itemName}
+              onChange={(e) => setItemName(e.target.value)}
+              placeholder="Enter Item Name"
+            />
+            <input
+              type="text"
+              className="form-control"
+              value={itemLink}
+              onChange={(e) => setItemLink(e.target.value)}
+              placeholder="Enter Item Link"
+            />
+            <input
+              type="text"
+              className="form-control"
+              value={itemQuantity}
+              onChange={(e) => setItemQuantity(parseInt(e.target.value, 10))}
+              placeholder="Enter Item Quantity"
+              min="1"
+            />
+            <div className="button-group">
+              <button className="btn btn-primary" onClick={handleEdit}>
+                Save Changes
+              </button>
+              <button className="btn btn-secondary" onClick={resetItemForm}>
+                Cancel
+              </button>
+            </div>
+            {message && <p>{message}</p>}
+          </div>
         )}
       </div>
     </Layout>
