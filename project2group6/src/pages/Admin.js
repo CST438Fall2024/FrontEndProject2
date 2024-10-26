@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import '../css/admin.css';
+import '../css/List.css';
 import Layout from '../Layout';
 import { Button } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';

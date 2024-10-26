@@ -3,7 +3,6 @@ import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import '../css/List.css';
 import Layout from '../Layout';
-import { Modal, Button } from "react-bootstrap";
 
 const ListContent = () => {
   const { wishlistID } = useParams(); 
