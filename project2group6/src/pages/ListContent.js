@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import '../css/List.css';
 import Layout from '../Layout';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import {Container, Row, Col} from 'react-bootstrap';
 
 const ListContent = () => {
   const { wishlistID } = useParams(); 
@@ -125,30 +126,49 @@ const ListContent = () => {
         {wishlist && !loading && (
           <div className="wishlist-info">
             <h1>{wishlist.wishlistName}</h1>
+            <strong>Description: </strong>
             <p>{wishlist.description}</p>
           </div>
         )}
 
         {/* list items */}
+        <Container>
+          
         {items.length > 0 ? (
           <ul className="item-list">
             {items.map((item, index) => (
-              <li key={index} className="item">
-                <strong>{item.itemName}</strong>
+              <Row key = "index" className = "justify-content-between item" md={8}>
+                <Row>
+                <Col>
+                <strong>
+                <h4>{item.itemName}</h4>
+                </strong>
+                </Col>
+                </Row>
+                <Col  className="text-center">
+                <strong>Link: </strong>
                 <p>
-                  Link: <a href= {normalize(item.itemLink)} target="_blank" rel="noopener noreferrer">{item.itemLink}</a>
+                  <a href= {normalize(item.itemLink)} target="_blank" rel="noopener noreferrer">{item.itemLink}</a>
                 </p>
-                <p>Quantity: {item.itemQuantity}</p>
+                <strong>Quantity: </strong>
+                <p>{item.itemQuantity}</p>
+                </Col>
+                <Row>
+                <Col>
                 <div className="button-container">
                   <button onClick={() => openEdit(item)}>Edit</button>
                   <button onClick={() => handleDelete(item.itemID)}>Remove</button>
                 </div>
-              </li>
+                </Col>
+                </Row>
+              </Row> 
             ))}
           </ul>
         ) : (
           !loading && <p>No items found in this list.</p>
-        )}
+        )
+        }
+        </Container>
            {/* For Editing an Item */}
            {isEditing &&  (
           <div className="edit-form">
