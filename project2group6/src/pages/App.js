@@ -9,7 +9,7 @@ function App() {
   // Will be used for the sessions for
   // localStorage.removeItem("sessionToken");
   const navigate = useNavigate();
-  const [data, setData] = useState(null);
+  const [setData] = useState(null);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -41,7 +41,7 @@ function App() {
       if (response.status === 200) {
         const userResponse = await axios.get(`${databaseUrl}all`);
         const user = userResponse.data.find((u) => u.username === username);
-
+        localStorage.setItem('user', JSON.stringify(user));
         if (user) {
           const token = "token";
           const admin = user.admin;
