@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import '../css/List.css';
-import { useNavigate } from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 import Layout from '../Layout';
 
 const List = () => {
@@ -9,13 +9,17 @@ const List = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // temporary hardcoded until sessions
-  const userID = 2;
-
   useEffect(() => {
     const fetchWishlists = async () => {
+      const storedUserID = localStorage.getItem('userID');
+      if (!storedUserID) {
+        setError('User is not logged in');
+        setLoading(false);
+        return;
+      }
+  
       try {
-        const response = await axios.get(`/wishlists/by/2`); // hardcoded
+        const response = await axios.get(`/wishlists/by/${storedUserID}`);
         setWishlists(response.data);
         setLoading(false);
       } catch (error) {
@@ -24,9 +28,10 @@ const List = () => {
         setLoading(false);
       }
     };
-
+  
     fetchWishlists();
-  }, [userID]);
+  }, []);
+  
 
   // NAVIGATION
   const navigate = useNavigate();
@@ -78,7 +83,7 @@ const List = () => {
                   {wishlist.wishlistName}
                 </strong>
                 <div className="button-container">
-                  <button onClick={() => alert(`Edit wishlistID:${wishlist.wishlistID} with userID:${userID} clicked!`)}>Edit</button>
+                  <button onClick={() => alert(`Edit wishlistID:${wishlist.wishlistID}`)}>Edit</button>
                   <button onClick={() => handleDelete(wishlist.wishlistID)}>Remove</button>
                 </div>
               </div>

@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import '../css/List.css'; // uses same style
+import '../css/List.css'; // uses the same style as List
 import Layout from '../Layout';
-import { Modal, Button } from "react-bootstrap";
-import 'bootstrap/dist/css/bootstrap.min.css';
 
 function Admin() {
   const [users, setUsers] = useState([]);
@@ -11,9 +9,13 @@ function Admin() {
   const [error, setError] = useState(null);
   const databaseUrl = '/users/';
   const [editingUser, setEditingUser] = useState(null);
-  const [showPopup, setShowPopup] = useState(false);
   const [editUsername, setUsername] = useState('');
   const [editPassword, setPassword] = useState('');
+
+  // New states for Add User mode
+  const [addMode, setAddMode] = useState(false);
+  const [newUsername, setNewUsername] = useState('');
+  const [newPassword, setNewPassword] = useState('');
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -31,78 +33,76 @@ function Admin() {
     fetchUsers();
   }, []);
 
-  const editUsers = async (users) => {
+  const editUsers = async (userId) => {
     try {
-      let userId = users;
-      console.log(users);
       if (!editingUser) {
-        console.log(userId);
         const response = await axios.get(`${databaseUrl}info/${userId}`);
         setEditingUser(response.data);
         setUsername(response.data.username);
         setPassword(response.data.password);
-        setShowPopup(true);
-      }
-      else {
-        const updateUser = await fetch(`${databaseUrl}edit`,
-          {
-            method: "PUT",
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({userID: userId, username: editUsername, password:editPassword})
-          });
+      } else {
+        const updateUser = await fetch(`${databaseUrl}edit`, {
+          method: "PUT",
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ userID: userId, username: editUsername, password: editPassword })
+        });
         setUsers(users.map(user => user.id === updateUser.id ? { ...user, ...updateUser } : user));
-        setShowPopup(false);
         setEditingUser(null);
       }
-    }
-    catch (error) {
+    } catch (error) {
       console.log(error);
     }
   };
 
-  const deleteUsers = async (users) => {
+  const deleteUsers = async (userId) => {
     try {
-      let userId = users;
-      const response = await fetch(`${databaseUrl}delete`,
-      {
+      const response = await fetch(`${databaseUrl}delete`, {
         method: "DELETE",
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({userID: userId})
+        body: JSON.stringify({ userID: userId })
       });
-      if(response.ok) 
-        {
-          setUsers((prevUsers) => prevUsers.filter((user) => user.userID !== userId));
-        }
-        else{
-          console.error(`Failed to delete user: ${userId}`);
-        }
-    }
-    catch (error) {
+      if(response.ok) {
+        setUsers((prevUsers) => prevUsers.filter((user) => user.userID !== userId));
+      } else {
+        console.error(`Failed to delete user: ${userId}`);
+      }
+    } catch (error) {
       console.error('There was an error deleting the user.');
     }
   };
-  const Popup = () => {
-    const handleClose = () => {setShowPopup(false); setEditingUser(null);};
-    return (
-      <Modal show={showPopup} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Edit User</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <input type="text" className="form-control" value={editUsername} onChange={(e) => setUsername(e.target.value)} placeholder="Enter Username" />
-          <input type="password" className="form-control" value={editPassword} onChange={(e) => setPassword(e.target.value)} placeholder="Enter Password" />
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="primary" onClick={() => editUsers(editingUser.userID)}>Save</Button>
-            <Button variant="secondary" onClick={handleClose}>Close</Button>
-          </Modal.Footer>
-      </Modal>
-    );
+
+  // Toggle Add User mode
+  const handleAddUserClick = () => {
+    setAddMode(!addMode);
   };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (name === 'newUsername') setNewUsername(value);
+    if (name === 'newPassword') setNewPassword(value);
+  };
+
+  const addUser = async () => {
+    try {
+      const response = await axios.post(`${databaseUrl}add`, {
+        username: newUsername,
+        password: newPassword
+      });
+      if (response.status === 200) {
+        setUsers([...users, response.data]);
+        setNewUsername('');
+        setNewPassword('');
+        setAddMode(false); // exit Add User mode after adding a user
+      }
+    } catch (error) {
+      console.error('Error adding user:', error);
+    }
+  };
+
   const renderContent = () => {
     if (loading) {
       return <p>Loading Users...</p>
@@ -119,18 +119,54 @@ function Admin() {
             <button onClick={() => deleteUsers(user.userID)}>Delete</button>
           </div>
         </div>
-      ))
+      ));
+    } else {
+      return <p>No users found</p>;
     }
-  }
+  };
 
   return (
     <div className="container">
       <Layout>
         <h1>All Users</h1>
+
+        {/* Toggle between Add User form and button */}
+        {addMode ? (
+          <div className="addUserForm">
+            <h2>Add New User</h2>
+            <div className="formField">
+              <label>Username:</label>
+              <input 
+                type="text" 
+                name="newUsername"
+                className="form-control" 
+                value={newUsername} 
+                onChange={handleChange} 
+                placeholder="Enter Username" 
+              />
+            </div>
+            <div className="formField">
+              <label>Password:</label>
+              <input 
+                type="password" 
+                name="newPassword"
+                className="form-control" 
+                value={newPassword} 
+                onChange={handleChange} 
+                placeholder="Enter Password" 
+              />
+            </div>
+            <button onClick={addUser} className="btn btn-success">Save User</button>
+            <button onClick={handleAddUserClick} className="btn btn-secondary">Cancel</button>
+          </div>
+        ) : (
+          <button onClick={handleAddUserClick} className="btn btn-primary">Add User</button>
+        )}
+
+        {/* Users List */}
         <div className="item-list">
           {renderContent()}
         </div>
-        {showPopup && <Popup/>}
       </Layout>
     </div>
   );

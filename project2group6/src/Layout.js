@@ -28,7 +28,7 @@ const Layout = ({children }) => {
         >
           Logout
         </button>
-        <p className="fs-1">WEBSITE NAME</p>
+        <p className="fs-1">LIST OF WISHES</p>
         {admin && (
           <button 
             className="btn btn-primary" 
