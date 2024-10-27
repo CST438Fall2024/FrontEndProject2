@@ -14,7 +14,6 @@ import ListContent from './pages/ListContent';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
-
   // for navigation
   <React.StrictMode>
       <BrowserRouter>

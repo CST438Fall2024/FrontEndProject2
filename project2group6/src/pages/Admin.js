@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import '../css/List.css'; // uses the same style as List
+import '../css/List.css';
 import Layout from '../Layout';
+import { Button } from "react-bootstrap";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function Admin() {
   const [users, setUsers] = useState([]);
@@ -11,6 +13,8 @@ function Admin() {
   const [editingUser, setEditingUser] = useState(null);
   const [editUsername, setUsername] = useState('');
   const [editPassword, setPassword] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+  const [showPopup, setShowPopup] = useState(false);
 
   // New states for Add User mode
   const [addMode, setAddMode] = useState(false);
@@ -29,28 +33,35 @@ function Admin() {
         setLoading(false);
       }
     };
-
     fetchUsers();
   }, []);
 
   const editUsers = async (userId) => {
+    if (editingUser?.userID === userId) return;
     try {
-      if (!editingUser) {
-        const response = await axios.get(`${databaseUrl}info/${userId}`);
-        setEditingUser(response.data);
-        setUsername(response.data.username);
-        setPassword(response.data.password);
-      } else {
-        const updateUser = await fetch(`${databaseUrl}edit`, {
-          method: "PUT",
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ userID: userId, username: editUsername, password: editPassword })
-        });
-        setUsers(users.map(user => user.id === updateUser.id ? { ...user, ...updateUser } : user));
-        setEditingUser(null);
-      }
+      const response = await axios.get(`${databaseUrl}info/${userId}`);
+      setEditingUser(response.data);
+      setUsername(response.data.username);
+      setPassword(response.data.password);
+      setShowPopup(true); // Show form in page
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const saveUserEdits = async () => {
+    if (!editingUser) return;
+    try {
+      const updatedUser = await axios.put(`${databaseUrl}edit`, {
+        userID: editingUser.userID,
+        username: editUsername,
+        password: editPassword,
+      });
+      // Update the user in the list without reloading the page
+      setUsers(users.map(user => user.userID === updatedUser.data.userID ? updatedUser.data : user));
+      setSuccessMessage("User updated successfully");
+      closeForm(); // Close form after saving
+      setTimeout(() => setSuccessMessage(''), 3000);
     } catch (error) {
       console.log(error);
     }
@@ -65,8 +76,10 @@ function Admin() {
         },
         body: JSON.stringify({ userID: userId })
       });
-      if(response.ok) {
+      if (response.ok) {
         setUsers((prevUsers) => prevUsers.filter((user) => user.userID !== userId));
+        setSuccessMessage("User deleted successfully");
+        setTimeout(() => setSuccessMessage(''), 3000);
       } else {
         console.error(`Failed to delete user: ${userId}`);
       }
@@ -103,13 +116,16 @@ function Admin() {
     }
   };
 
+  const closeForm = () => {
+    setShowPopup(false);
+    setEditingUser(null);
+    setUsername('');
+    setPassword('');
+  };
+
   const renderContent = () => {
-    if (loading) {
-      return <p>Loading Users...</p>
-    }
-    if (error) {
-      return <p>{error}</p>
-    }
+    if (loading) return <p>Loading Users...</p>;
+    if (error) return <p>{error}</p>;
     if (users.length > 0) {
       return users.map((user) => (
         <div key={user.userID} className="item">
@@ -167,6 +183,40 @@ function Admin() {
         <div className="item-list">
           {renderContent()}
         </div>
+
+        {showPopup && (
+          <div className="edit-form">
+            <h2>Edit User</h2>
+            <div className="form-group">
+              <input
+                type="text"
+                className="form-control"
+                value={editUsername}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Enter Username"
+              />
+            </div>
+            <div className="form-group">
+              <input
+                type="password"
+                className="form-control"
+                value={editPassword}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter Password"
+              />
+            </div>
+            <div className="button-group">
+              <Button variant="primary" onClick={saveUserEdits}>
+                Save
+              </Button>
+              <Button variant="secondary" onClick={closeForm}>
+                Cancel
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {successMessage && <p className="success-message">{successMessage}</p>}
       </Layout>
     </div>
   );

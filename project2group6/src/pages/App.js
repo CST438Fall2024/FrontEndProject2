@@ -9,7 +9,7 @@ function App() {
   // Will be used for the sessions for
   // localStorage.removeItem("sessionToken");
   const navigate = useNavigate();
-  const [data, setData] = useState(null);
+  const [setData] = useState(null);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
