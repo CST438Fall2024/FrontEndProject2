@@ -3,7 +3,6 @@ import axios from 'axios';
 import '../css/AddItem.css';
 import Layout from '../Layout';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
 function AddItem() {
   const [listTitle, setListTitle] = useState('');
   const [listDescription, setListDescription] = useState('');
@@ -11,19 +10,16 @@ function AddItem() {
   const [selectedList, setSelectedList] = useState('');
   const [itemName, setItemName] = useState('');
   const [itemLink, setItemLink] = useState('');
-  const [itemDate, setItemDate] = useState('');
+  const [itemQuantity, setItemQuantity] = useState(1);
   const [message, setMessage] = useState('');
-
   // sessions
   const userID = localStorage.getItem('userID');
-
   useEffect(() => {
     const fetchWishlists = async () => {
       if (!userID) {
         setMessage('User is not logged in');
         return;
       }
-
       try {
         const response = await axios.get(`/wishlists/by/${userID}`);
         setWishlists(response.data);
@@ -34,28 +30,23 @@ function AddItem() {
     };
     fetchWishlists();
   }, [userID]);
-
   // NEW WISHLIST
   const handleAddList = async (e) => {
     e.preventDefault();
-
     if (!listTitle || !listDescription) {
       setMessage('Please provide both title and description');
       return;
     }
-
     try {
       const response = await axios.post('/wishlists/add', {
         wishlistName: listTitle,
         description: listDescription,
         userID: userID,
       });
-
       if (response.status === 200) {
         setMessage('Wishlist added successfully');
         setListTitle('');
         setListDescription('');
-    
         const updatedWishlists = await axios.get(`/wishlists/by/${userID}`);
         setWishlists(updatedWishlists.data);
       }
@@ -64,36 +55,33 @@ function AddItem() {
       setMessage('Failed to add wishlist. Please try again.');
     }
   };
-
   // NEW ITEM
   const handleAddItem = async (e) => {
     e.preventDefault();
-
     if (!itemName || !selectedList) {
       setMessage('Please select a wishlist and enter an item name');
       return;
     }
-
     try {
       const response = await axios.post(`/items/add`, {
         itemName: itemName,
         itemLink: itemLink,
-        itemQuantity: 1,
+        itemQuantity: itemQuantity,
         wishlistID: selectedList,
       });
-
       if (response.status === 200) {
         setMessage('Item added successfully');
         setItemName('');
         setItemLink('');
-        setItemDate('');
+        setItemQuantity(1);
       }
+      console.log(response);
+      console.log(`${itemName}, ${itemLink}, ${itemQuantity}, ${selectedList}`);
     } catch (error) {
       console.error('Error adding item:', error);
       setMessage('Failed to add item. Please try again.');
     }
   };
-
   return (
     <Layout>
       <div className="formContainer">
@@ -126,7 +114,6 @@ function AddItem() {
           </form>
           {message && <p>{message}</p>}
         </div>
-
         {/* Add an item */}
         <div className="addItem">
           <h2>Add an Item</h2>
@@ -169,13 +156,13 @@ function AddItem() {
               />
             </div>
             <div className="formField">
-              <label htmlFor="itemDate">Desired Date:</label>
+              <label htmlFor= "itemQuantity">Desired Quantity:</label>
               <input
-                type="date"
-                id="itemDate"
-                name="itemDate"
-                value={itemDate}
-                onChange={(e) => setItemDate(e.target.value)}
+                type="number"
+                id="itemQuantity"
+                name="itemQuantity"
+                value={itemQuantity}
+                onChange={(e) => setItemQuantity(e.target.value)}
               />
             </div>
             <button type="submit">Add Item</button>
@@ -186,5 +173,4 @@ function AddItem() {
     </Layout>
   );
 }
-
 export default AddItem;
