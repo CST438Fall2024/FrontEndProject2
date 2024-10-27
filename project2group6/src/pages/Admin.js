@@ -1,18 +1,20 @@
-import React, { useEffect, useState } from 'react';
+// Imports for the Admin page
+import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
-import '../css/List.css';
+import '../css/admin.css';
 import Layout from '../Layout';
 import { Button } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function Admin() {
+  // Constants for declaring users and editing users
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const databaseUrl = '/users/';
   const [editingUser, setEditingUser] = useState(null);
-  const [editUsername, setUsername] = useState('');
-  const [editPassword, setPassword] = useState('');
+  const [editUsername, setEditUsername] = useState('');
+  const [editPassword, setEditPassword] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [showPopup, setShowPopup] = useState(false);
 
@@ -20,7 +22,10 @@ function Admin() {
   const [addMode, setAddMode] = useState(false);
   const [newUsername, setNewUsername] = useState('');
   const [newPassword, setNewPassword] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const bottomReference = useRef(null);
 
+  // Fetch the users from the database
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -36,19 +41,21 @@ function Admin() {
     fetchUsers();
   }, []);
 
+  // Handles the edit User
   const editUsers = async (userId) => {
     if (editingUser?.userID === userId) return;
     try {
       const response = await axios.get(`${databaseUrl}info/${userId}`);
       setEditingUser(response.data);
-      setUsername(response.data.username);
-      setPassword(response.data.password);
+      setEditUsername(response.data.username);
+      setEditPassword(response.data.password);
       setShowPopup(true); // Show form in page
     } catch (error) {
       console.log(error);
     }
   };
 
+  // Sends the edited user to the database
   const saveUserEdits = async () => {
     if (!editingUser) return;
     try {
@@ -67,6 +74,7 @@ function Admin() {
     }
   };
 
+  // Deletes the user
   const deleteUsers = async (userId) => {
     try {
       const response = await fetch(`${databaseUrl}delete`, {
@@ -116,18 +124,26 @@ function Admin() {
     }
   };
 
+  // Implementing a Button to go to the bottom of the Page
+  const ScrollToBottom = () => {
+    bottomReference.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  // Handles the closing of the editing user
   const closeForm = () => {
     setShowPopup(false);
     setEditingUser(null);
-    setUsername('');
-    setPassword('');
+    setEditUsername('');
+    setEditPassword('');
   };
 
+  // Provides the list of users from the database
   const renderContent = () => {
     if (loading) return <p>Loading Users...</p>;
     if (error) return <p>{error}</p>;
-    if (users.length > 0) {
-      return users.map((user) => (
+    const filteredUsers = users.filter(user => user.username.toLowerCase().includes(searchQuery.toLowerCase()));
+    return filteredUsers.length > 0 ? (
+      filteredUsers.map((user) => (
         <div key={user.userID} className="item">
           <span>{user.username}</span>
           <div className="button-container">
@@ -135,10 +151,10 @@ function Admin() {
             <button onClick={() => deleteUsers(user.userID)}>Delete</button>
           </div>
         </div>
-      ));
-    } else {
-      return <p>No users found</p>;
-    }
+      ))
+    ) : (
+      <p>No users found</p>
+    );
   };
 
   return (
@@ -180,10 +196,20 @@ function Admin() {
         )}
 
         {/* Users List */}
+        <div className="container mb-3">
+          <input
+            type="text"
+            placeholder="Search for a User"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="form-control mb-3"
+          />
+          <button onClick={ScrollToBottom} className="btn btn-primary">Scroll to Bottom</button>
+        </div>
         <div className="item-list">
           {renderContent()}
         </div>
-
+        <div ref={bottomReference}></div>
         {showPopup && (
           <div className="edit-form">
             <h2>Edit User</h2>
@@ -192,7 +218,7 @@ function Admin() {
                 type="text"
                 className="form-control"
                 value={editUsername}
-                onChange={(e) => setUsername(e.target.value)}
+                onChange={(e) => setEditUsername(e.target.value)}
                 placeholder="Enter Username"
               />
             </div>
@@ -201,7 +227,7 @@ function Admin() {
                 type="password"
                 className="form-control"
                 value={editPassword}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => setEditPassword(e.target.value)}
                 placeholder="Enter Password"
               />
             </div>
