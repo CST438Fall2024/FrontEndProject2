@@ -50,8 +50,10 @@ function App() {
         if (user) {
           const token = "token";
           const admin = user.admin;
+          const userID = user.userID;
           localStorage.setItem('token', token);
           localStorage.setItem('admin', admin);
+          localStorage.setItem('userID', userID); // access on all pages when logged in
           console.log(token);
           console.log(admin);
           if (admin) {
@@ -67,6 +69,7 @@ function App() {
       setLoading(false);
     }
   };
+  
 
   // Signup function, checks password confirmation before signing up
   const signup = async () => {

@@ -11,14 +11,22 @@ function Profile() {
   const [updatedUser, setUpdatedUser] = useState({ username: '', password: '' });
   const navigate = useNavigate();
 
+  // session
+  const userID = localStorage.getItem('userID');
+
   // fetch data
   useEffect(() => {
     const fetchUser = async () => {
+      if (!userID) {
+        console.warn('User is not logged in');
+        return;
+      }
+
       try {
         const response = await axios.get('/users/all');
         const allUsers = response.data;
-  
-        const fetchedUser = allUsers.find(user => user.userID === 16);
+
+        const fetchedUser = allUsers.find(user => user.userID === parseInt(userID));
         if (fetchedUser) {
           setUser({
             username: fetchedUser.username || 'no username',
@@ -35,9 +43,9 @@ function Profile() {
         console.error('Error fetching user data:', error);
       }
     };
-  
+
     fetchUser();
-  }, []);
+  }, [userID]);
 
   // edit mode
   const handleEditClick = () => {
@@ -51,13 +59,18 @@ function Profile() {
     });
   };
 
-  // save and update info
+  // update user info
   const saveChanges = async () => {
+    if (!userID) {
+      alert('User is not logged in');
+      return;
+    }
+
     try {
       await axios.put(`/users/edit`, {
         username: updatedUser.username,
         password: updatedUser.password,
-        userID: 16
+        userID: parseInt(userID),
       });
 
       setUser(updatedUser);
@@ -70,21 +83,30 @@ function Profile() {
 
   // logout function
   const handleLogout = () => {
-    // for now, navigate to landing page
+    // Clear session data
+    localStorage.removeItem('token');
+    localStorage.removeItem('admin');
+    localStorage.removeItem('userID');
     navigate('/');
   };
 
-  // delete function
+  // delete account
   const handleDeleteAccount = async () => {
+    if (!userID) {
+      alert('User is not logged in');
+      return;
+    }
+
     const confirmDelete = window.confirm('Are you sure you want to delete your account? This action cannot be undone.');
     if (!confirmDelete) return;
 
     try {
-      await axios.delete(`/users/delete`,{
-        userID: 16
+      await axios.delete(`/users/delete`, {
+        data: { userID: parseInt(userID) },
       });
 
-      navigate('/');
+      // clear session go to landing page
+      handleLogout();
     } catch (error) {
       console.error('Error deleting account:', error);
       alert('Failed to delete the account. Please try again.');
