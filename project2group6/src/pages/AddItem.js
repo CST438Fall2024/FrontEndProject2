@@ -66,7 +66,7 @@ function AddItem() {
       const response = await axios.post(`/items/add`, {
         itemName: itemName,
         itemLink: itemLink,
-        itemQuantity: 1,
+        itemQuantity: itemQuantity,
         wishlistID: selectedList,
       });
       if (response.status === 200) {
@@ -76,7 +76,7 @@ function AddItem() {
         setItemQuantity(1);
       }
       console.log(response);
-      console.log(`${itemName}, ${itemLink}, ${itemQuantity}`);
+      console.log(`${itemName}, ${itemLink}, ${itemQuantity}, ${selectedList}`);
     } catch (error) {
       console.error('Error adding item:', error);
       setMessage('Failed to add item. Please try again.');
