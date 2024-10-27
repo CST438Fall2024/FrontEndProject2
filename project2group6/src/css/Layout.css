@@ -1,6 +1,7 @@
 .container {
     font-family: Arial, sans-serif;
     padding: 20px;
+    
 }
 
 .header {
@@ -15,4 +16,8 @@
     padding: 10px 20px;
     font-size: 16px;
     cursor: pointer;
+}
+
+body{
+    Background: #f6f5f8;
 }

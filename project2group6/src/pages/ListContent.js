@@ -137,7 +137,7 @@ const ListContent = () => {
         {items.length > 0 ? (
           <ul className="item-list">
             {items.map((item, index) => (
-              <Row key = "index" className = "justify-content-between item" md={8}>
+              <Row key = "index" className = "justify-content-between my-3 item " md={8}>
                 <Row>
                 <Col>
                 <strong>

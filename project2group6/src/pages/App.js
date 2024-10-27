@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../css/App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { Container, Row, Col } from 'react-bootstrap';
 
 function App() {
   // Will be used for the sessions for
@@ -70,6 +71,18 @@ function App() {
       alert('Passwords do not match');
       return;
     }
+    if (!password) {
+      alert('Enter a password')
+      return;
+    }
+    if (!username) {
+      alert('Enter a username')
+      return;
+    }
+    if (!confirmPassword) {
+      alert('Please re-enter your password')
+      return;
+    }
     try {
       const response = await axios.post(`${databaseUrl}add`, {
         username,
@@ -80,66 +93,98 @@ function App() {
         const token = response.data.token; // Get the token from the server response
         localStorage.setItem('sessionToken', token); // Store token in localStorage
       }
+      if (response.status === 500) {
+        alert('There is already a user in the system.');
+      }
     } catch (error) {
-      alert('Something went wrong during signup.');
+      alert('Something went wrong during signup. Please try again.');
     }
   };
 
   return (
-    <div className="App">
-      <h1>Let's Make a Wishlist!</h1>
-      <div className="loginSignup row justify-content-between">
+    <Container>
+      <div className="App">
+        <Row>
+          <h1>Let's Make a Wishlist!</h1>
+        </Row>
+        <Container>
+          <div className="loginSignup row justify-content-between">
 
-        {/* Login container */}
-        <div className="login col-md-3 border p-4">
-          <h3>Login?</h3>
-          <input
-            type="text"
-            placeholder="Username"
-            className="form-control mb-2"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            className="form-control mb-2"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <button className="btn btn-primary" onClick={login}>
-            Login
-          </button>
-        </div>
+            {/* Login container */}
+            <div className="login col-md-3 border p-4">
+              <h3>Login?</h3>
+              <input
+                type="text"
+                placeholder="Username"
+                className="form-control mb-2"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
+              <input
+                type="password"
+                placeholder="Password"
+                className="form-control mb-2"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <button className="btn btn-primary" onClick={login}>
+                Login
+              </button>
+            </div>
 
-        {/* Signup container */}
-        <div className="signup col-md-3 border p-4">
-          <h3>Signup?</h3>
-          <input
-            type="text"
-            placeholder="Username"
-            className="form-control mb-2"
-            onChange={(e) => setUsername(e.target.value)}
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            className="form-control mb-2"
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <input
-            type="password"
-            placeholder="Re-enter password"
-            className="form-control mb-2"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-          />
-          <button className="btn btn-success" onClick={signup}>
-            Sign Up
-          </button>
-        </div>
+            {/* Signup container */}
+            <div className="signup col-md-3 border p-4">
+              <h3>Signup?</h3>
+              <input
+                type="text"
+                placeholder="Username"
+                className="form-control mb-2"
+                onChange={(e) => setUsername(e.target.value)}
+              />
+              <input
+                type="password"
+                placeholder="Password"
+                className="form-control mb-2"
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <input
+                type="password"
+                placeholder="Re-enter password"
+                className="form-control mb-2"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+              <button className="btn btn-success" onClick={signup}>
+                Sign Up
+              </button>
+            </div>
+
+          </div>
+        </Container>
       </div>
-    </div>
+      <Container>
+        <Row>
+          <Col md={4}>
+            <video muted controls>
+              <source src={require('../Media/3189188-hd_1080_1920_25fps.mp4')} type="video/mp4"/>
+                Your browser does not support the video... Sorry!!!
+            </video>
+            </Col>
+            <Col md={4}>
+            <video muted controls>
+              <source src={require('../Media/4612178-uhd_2160_4096_25fps.mp4')} type="video/mp4"/>
+                Your browser does not support the video... Sorry!!!
+            </video>
+            </Col>
+            <Col md={4}>
+            <video muted controls>
+              <source src={require('../Media/13931579-uhd_2160_3840_24fps.mp4')} type="video/mp4"/>
+                Your browser does not support the video... Sorry!!!
+            </video>
+            </Col>
+        </Row>
+      </Container>
+    </Container>
   );
 }
 
