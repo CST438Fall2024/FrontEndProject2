@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import '../css/List.css';
-import { useNavigate } from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 import Layout from '../Layout';
 
 const List = () => {
@@ -14,13 +14,17 @@ const List = () => {
   const [successMessage, setSuccessMessage] = useState('');
   const user = JSON.parse(localStorage.getItem('user'));
 
-  // temporary hardcoded until sessions
-  const userID = 2;
-
   useEffect(() => {
     const fetchWishlists = async () => {
+      const storedUserID = localStorage.getItem('userID');
+      if (!storedUserID) {
+        setError('User is not logged in');
+        setLoading(false);
+        return;
+      }
+  
       try {
-        const response = await axios.get(`/wishlists/by/${userID}`); // hardcoded
+        const response = await axios.get(`/wishlists/by/${storedUserID}`);
         setWishlists(response.data);
         setLoading(false);
       } catch (error) {
@@ -29,9 +33,10 @@ const List = () => {
         setLoading(false);
       }
     };
-
+  
     fetchWishlists();
-  }, [userID]);
+  }, []);
+  
 
   // NAVIGATION
   const navigate = useNavigate();

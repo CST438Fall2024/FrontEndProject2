@@ -7,20 +7,25 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 function AddItem() {
   const [listTitle, setListTitle] = useState('');
   const [listDescription, setListDescription] = useState('');
-  const [wishlists, setWishlists] = useState([]); 
+  const [wishlists, setWishlists] = useState([]);
   const [selectedList, setSelectedList] = useState('');
   const [itemName, setItemName] = useState('');
   const [itemLink, setItemLink] = useState('');
   const [itemDate, setItemDate] = useState('');
   const [message, setMessage] = useState('');
 
-  // hardcoded
-  const userID = 2;
+  // sessions
+  const userID = localStorage.getItem('userID');
 
   useEffect(() => {
     const fetchWishlists = async () => {
+      if (!userID) {
+        setMessage('User is not logged in');
+        return;
+      }
+
       try {
-        const response = await axios.get(`/wishlists/by/2`);//by/${userID}
+        const response = await axios.get(`/wishlists/by/${userID}`);
         setWishlists(response.data);
       } catch (error) {
         console.error('Error fetching wishlists:', error);
@@ -50,6 +55,9 @@ function AddItem() {
         setMessage('Wishlist added successfully');
         setListTitle('');
         setListDescription('');
+    
+        const updatedWishlists = await axios.get(`/wishlists/by/${userID}`);
+        setWishlists(updatedWishlists.data);
       }
     } catch (error) {
       console.error('Error adding wishlist:', error);
@@ -57,7 +65,7 @@ function AddItem() {
     }
   };
 
-  //NEW ITEM
+  // NEW ITEM
   const handleAddItem = async (e) => {
     e.preventDefault();
 
@@ -71,8 +79,7 @@ function AddItem() {
         itemName: itemName,
         itemLink: itemLink,
         itemQuantity: 1,
-        //desiredDate: itemDate,
-        wishlistID: 1,
+        wishlistID: selectedList,
       });
 
       if (response.status === 200) {

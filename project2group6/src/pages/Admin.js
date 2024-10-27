@@ -11,10 +11,15 @@ function Admin() {
   const [error, setError] = useState(null);
   const databaseUrl = '/users/';
   const [editingUser, setEditingUser] = useState(null);
-  const [showPopup, setShowPopup] = useState(false);
   const [editUsername, setUsername] = useState('');
   const [editPassword, setPassword] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const [showPopup, setShowPopup] = useState(false);
+
+  // New states for Add User mode
+  const [addMode, setAddMode] = useState(false);
+  const [newUsername, setNewUsername] = useState('');
+  const [newPassword, setNewPassword] = useState('');
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -52,10 +57,11 @@ function Admin() {
         username: editUsername,
         password: editPassword,
       });
-      window.location.reload();
-      setSuccessMessage("Updated User Successfully");
+      // Update the user in the list without reloading the page
+      setUsers(users.map(user => user.userID === updatedUser.data.userID ? updatedUser.data : user));
+      setSuccessMessage("User updated successfully");
       closeForm(); // Close form after saving
-      setTimeout(() => setSuccessMessage(null),3000);
+      setTimeout(() => setSuccessMessage(''), 3000);
     } catch (error) {
       console.log(error);
     }
@@ -72,14 +78,41 @@ function Admin() {
       });
       if (response.ok) {
         setUsers((prevUsers) => prevUsers.filter((user) => user.userID !== userId));
-        setSuccessMessage("Updated User Successfully");
-        closeForm(); // Close form after saving
-        setTimeout(() => setSuccessMessage(null),3000);
+        setSuccessMessage("User deleted successfully");
+        setTimeout(() => setSuccessMessage(''), 3000);
       } else {
         console.error(`Failed to delete user: ${userId}`);
       }
     } catch (error) {
       console.error('There was an error deleting the user.');
+    }
+  };
+
+  // Toggle Add User mode
+  const handleAddUserClick = () => {
+    setAddMode(!addMode);
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (name === 'newUsername') setNewUsername(value);
+    if (name === 'newPassword') setNewPassword(value);
+  };
+
+  const addUser = async () => {
+    try {
+      const response = await axios.post(`${databaseUrl}add`, {
+        username: newUsername,
+        password: newPassword
+      });
+      if (response.status === 200) {
+        setUsers([...users, response.data]);
+        setNewUsername('');
+        setNewPassword('');
+        setAddMode(false); // exit Add User mode after adding a user
+      }
+    } catch (error) {
+      console.error('Error adding user:', error);
     }
   };
 
@@ -93,21 +126,60 @@ function Admin() {
   const renderContent = () => {
     if (loading) return <p>Loading Users...</p>;
     if (error) return <p>{error}</p>;
-    return users.map((user) => (
-      <div key={user.userID} className="item">
-        <span>{user.username}</span>
-        <div className="button-container">
-          <button onClick={() => editUsers(user.userID)}>Edit</button>
-          <button onClick={() => deleteUsers(user.userID)}>Delete</button>
+    if (users.length > 0) {
+      return users.map((user) => (
+        <div key={user.userID} className="item">
+          <span>{user.username}</span>
+          <div className="button-container">
+            <button onClick={() => editUsers(user.userID)}>Edit</button>
+            <button onClick={() => deleteUsers(user.userID)}>Delete</button>
+          </div>
         </div>
-      </div>
-    ));
+      ));
+    } else {
+      return <p>No users found</p>;
+    }
   };
 
   return (
     <div className="container">
       <Layout>
         <h1>All Users</h1>
+
+        {/* Toggle between Add User form and button */}
+        {addMode ? (
+          <div className="addUserForm">
+            <h2>Add New User</h2>
+            <div className="formField">
+              <label>Username:</label>
+              <input 
+                type="text" 
+                name="newUsername"
+                className="form-control" 
+                value={newUsername} 
+                onChange={handleChange} 
+                placeholder="Enter Username" 
+              />
+            </div>
+            <div className="formField">
+              <label>Password:</label>
+              <input 
+                type="password" 
+                name="newPassword"
+                className="form-control" 
+                value={newPassword} 
+                onChange={handleChange} 
+                placeholder="Enter Password" 
+              />
+            </div>
+            <button onClick={addUser} className="btn btn-success">Save User</button>
+            <button onClick={handleAddUserClick} className="btn btn-secondary">Cancel</button>
+          </div>
+        ) : (
+          <button onClick={handleAddUserClick} className="btn btn-primary">Add User</button>
+        )}
+
+        {/* Users List */}
         <div className="item-list">
           {renderContent()}
         </div>
@@ -126,7 +198,7 @@ function Admin() {
             </div>
             <div className="form-group">
               <input
-                type="text"
+                type="password"
                 className="form-control"
                 value={editPassword}
                 onChange={(e) => setPassword(e.target.value)}
@@ -143,6 +215,8 @@ function Admin() {
             </div>
           </div>
         )}
+
+        {successMessage && <p className="success-message">{successMessage}</p>}
       </Layout>
     </div>
   );
