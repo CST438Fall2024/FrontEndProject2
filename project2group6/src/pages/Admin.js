@@ -59,13 +59,14 @@ function Admin() {
   const saveUserEdits = async () => {
     if (!editingUser) return;
     try {
-      await axios.put(`${databaseUrl}edit`, {
+      const response = await axios.put(`${databaseUrl}edit`, {
         userID: editingUser.userID,
         username: editUsername,
         password: editPassword,
       });
+
       // Update the user in the list without reloading the page
-      setUsers(users.map(user => user.userID === updatedUser.data.userID ? updatedUser.data : user));
+     setUsers(users.map(user => user.userID === editingUser.userID ? response.data : user));
       setSuccessMessage("User updated successfully");
       closeForm(); // Close form after saving
       setTimeout(() => setSuccessMessage(''), 3000);
@@ -140,8 +141,11 @@ function Admin() {
   const renderContent = () => {
     if (loading) return <p>Loading Users...</p>;
     if (error) return <p>{error}</p>;
-    const filteredUsers = users.filter(user => user.username.toLowerCase().includes(searchQuery.toLowerCase()));
-    
+  
+    const filteredUsers = users.filter(user => 
+      user.username && user.username.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  
     if (filteredUsers.length === 0) {
       return <p>No users found</p>;
     }
