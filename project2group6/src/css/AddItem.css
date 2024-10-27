@@ -5,7 +5,8 @@
   padding: 20px;
 }
 
-.addList, .addItem {
+.addList,
+.addItem {
   width: 45%;
   border: 1px solid #ccc;
   border-radius: 8px;
@@ -23,9 +24,57 @@ label {
   margin-bottom: 5px;
 }
 
-input, textarea {
+input,
+textarea {
   width: 100%;
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
+}
+
+button:hover {
+  background-color: #9a8678;
+}
+
+button.cancel {
+  background-color: #6c757d;
+}
+
+button.cancel:hover {
+  background-color: #5a6268;
+}
+
+body {
+  Background: #E6E6E6;
+}
+
+.btn-primary {
+  background-color: #8e7051;
+  border-color: #6e533d;
+}
+
+.btn-primary:hover {
+  background-color: #9a8678;
+  color: black;
+  border-color: #6e533d;
+}
+
+.btn-secondary {
+  background-color: #8e7051;
+  border-color: #6e533d;
+}
+
+.button-group .btn-primary {
+  background-color: #8e7051;
+  border-color: #6e533d;
+}
+
+button {
+  margin-top: 15px;
+  padding: 8px 12px;
+  background-color: #8e7051;
+  border-color: #6e533d;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import '../css/List.css';
 import { useNavigate } from 'react-router-dom';
@@ -12,7 +12,8 @@ const List = () => {
   const [wishlistName, setWishlistName] = useState('');
   const [currentWishlistID, setCurrentWishlistID] = useState(null);
   const [successMessage, setSuccessMessage] = useState('');
-  const user = JSON.parse(localStorage.getItem('user'));
+  const [searchQuery, setSearchQuery] = useState('');
+  const bottomReference = useRef(null);
 
   // temporary hardcoded until sessions
   const userID = 2;
@@ -60,13 +61,17 @@ const List = () => {
   };
 
   //Opens the edit Form
-  const openEdit = (wishlistID) => 
-    {
+  const openEdit = (wishlistID) => {
     const currentWishlist = wishlists.find(wishlist => wishlist.wishlistID === wishlistID);
     setWishlistName(currentWishlist.wishlistName);
     setWishlistDescription(currentWishlist.description);
     setCurrentWishlistID(wishlistID);
-    };
+  };
+
+  //Implementing a Button to go to the bottom of the Page
+  const ScrollToBottom = () => {
+    bottomReference.current?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   // Handles the edits for the wishlist
   const handleEdit = async (wishlistID) => {
@@ -76,11 +81,11 @@ const List = () => {
         wishlistName: wishlistName,
         description: wishlistDescription,
       });
-      setWishlists((prevWishlists) => 
-        prevWishlists.map(wishlist => 
-          wishlist.wishlistID === currentWishlistID 
-          ? { ...wishlist, wishlistName, description: wishlistDescription } 
-          : wishlist
+      setWishlists((prevWishlists) =>
+        prevWishlists.map(wishlist =>
+          wishlist.wishlistID === currentWishlistID
+            ? { ...wishlist, wishlistName, description: wishlistDescription }
+            : wishlist
         )
       );
       alert("Wishlist updated successfully.");
@@ -99,31 +104,46 @@ const List = () => {
           Wishlist / Item List{' '}
           <button onClick={() => handleNavigation('/add-item')}>Add</button>
         </h1>
-
+        <div className="container mb-3">
+          <input
+            type="text"
+            placeholder="Search for a Wishlist"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="form-control mb-3" />
+          <button onClick={ScrollToBottom} className="btn btn-primary">Scroll to Bottom</button>
+        </div>
         <div className="item-list">
           {loading ? (
             <p>Loading wishlists...</p>
           ) : error ? (
             <p>{error}</p>
-          ) : wishlists.length > 0 ? (
-            wishlists.map((wishlist) => (
-              <div key={wishlist.wishlistID} className="item">
-                <strong 
-                  onClick={() => goToWishlist(wishlist.wishlistID)}
-                  style={{ cursor: 'pointer', color: 'blue' }}
-                >
-                  {wishlist.wishlistName}
-                </strong>
-                <div className="button-container">
-                  <button onClick={() => openEdit(wishlist.wishlistID)}>Edit</button>
-                  <button onClick={() => handleDelete(wishlist.wishlistID)}>Remove</button>
-                </div>
-              </div>
-            ))
           ) : (
-            <p>No wishlists available</p>
-          )}
+            (() => {
+              const filteredWishlists = wishlists.filter(wishlist =>
+                wishlist.wishlistName.toLowerCase().includes(searchQuery.toLowerCase())
+              );
+              return filteredWishlists.length > 0 ? (
+                filteredWishlists.map((wishlist) => (
+                  <div key={wishlist.wishlistID} className="item">
+                    <strong
+                      onClick={() => goToWishlist(wishlist.wishlistID)}
+                      style={{ cursor: 'pointer', color: 'blue' }}
+                    >
+                      {wishlist.wishlistName}
+                    </strong>
+                    <div className="button-container">
+                      <button onClick={() => openEdit(wishlist.wishlistID)}>Edit</button>
+                      <button onClick={() => handleDelete(wishlist.wishlistID)}>Remove</button>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p>No wishlists available</p>
+              );
+            })())}
         </div>
+        {/* The form for editing the Wishlist */}
         {currentWishlistID && (
           <div className="edit-form">
             <h2>Edit Wishlist</h2>
@@ -140,6 +160,7 @@ const List = () => {
               onChange={(e) => setWishlistDescription(e.target.value)}
               placeholder="Enter Description"
             />
+            <div ref= {bottomReference}></div>
             <div className="button-group">
               <button className="btn btn-primary" onClick={handleEdit}>
                 Save Changes

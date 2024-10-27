@@ -5,6 +5,7 @@ import axios from 'axios';
 import '../css/App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Row, Col } from 'react-bootstrap';
+import backgroundImage from '../Media/pexels-content-pixie-1405717-2736499.jpg';
 
 function App() {
   // Will be used for the sessions for
@@ -41,8 +42,11 @@ function App() {
       console.log(response);
       if (response.status === 200) {
         const userResponse = await axios.get(`${databaseUrl}all`);
-        const user = userResponse.data.find((u) => u.username === username);
+        const user = userResponse.data.find((u) => u.username === username && u.password === password);
         localStorage.setItem('user', JSON.stringify(user));
+        if(!user){
+          alert('Username or Password do not match');
+        }
         if (user) {
           const token = "token";
           const admin = user.admin;
@@ -102,16 +106,29 @@ function App() {
   };
 
   return (
-    <Container>
-      <div className="App">
-        <Row>
-          <h1>Let's Make a Wishlist!</h1>
-        </Row>
-        <Container>
-          <div className="loginSignup row justify-content-between">
-
+    <Container fluid style={{ height: '100vh' }} className="p-0">
+      <Row className="w-100 no-gutters">
+        <Col md={6}
+          style={{
+            backgroundImage: `url(${backgroundImage})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            height: '100vh',
+            padding: 0,
+          }}>
+        </Col>
+        <Col md={6} className="d-flex align-items-center justify-content-center"
+          style={{
+            paddingRight: '10px',
+            height: '100vh'
+          }}>
+          <div className="App d-flex flex-column align-items-center"
+            style={{
+              width: '100%'
+            }}>
+            <h1>Let's Make a Wishlist!</h1>
             {/* Login container */}
-            <div className="login col-md-3 border p-4">
+            <div className="login w-75 p-3 mb-3 text-center">
               <h3>Login?</h3>
               <input
                 type="text"
@@ -133,7 +150,7 @@ function App() {
             </div>
 
             {/* Signup container */}
-            <div className="signup col-md-3 border p-4">
+            <div className="signup w-75 p-3 mb-3 text-center">
               <h3>Signup?</h3>
               <input
                 type="text"
@@ -158,32 +175,9 @@ function App() {
                 Sign Up
               </button>
             </div>
-
           </div>
-        </Container>
-      </div>
-      <Container>
-        <Row>
-          <Col md={4}>
-            <video muted controls>
-              <source src={require('../Media/3189188-hd_1080_1920_25fps.mp4')} type="video/mp4"/>
-                Your browser does not support the video... Sorry!!!
-            </video>
-            </Col>
-            <Col md={4}>
-            <video muted controls>
-              <source src={require('../Media/4612178-uhd_2160_4096_25fps.mp4')} type="video/mp4"/>
-                Your browser does not support the video... Sorry!!!
-            </video>
-            </Col>
-            <Col md={4}>
-            <video muted controls>
-              <source src={require('../Media/13931579-uhd_2160_3840_24fps.mp4')} type="video/mp4"/>
-                Your browser does not support the video... Sorry!!!
-            </video>
-            </Col>
-        </Row>
-      </Container>
+        </Col>
+      </Row>
     </Container>
   );
 }

@@ -1,29 +1,64 @@
 /* Overall layout for the entire webpage */
 .App {
   text-align: center;
-  padding: 50px;
 }
 
-/* A div box that contains all of the sign up forms */
-.loginSignup {
-  display:flex;
-  justify-content: space-between;
-  width:100%;
-}
 /* The separate forms */
-.login, .signup, .Google {
+.login,
+.signup {
   text-align: center;
   justify-content: center;
   align-items: center;
   display: grid;
-  border: 1px solid  #112D4E;
+  border: 1px solid #112D4E;
   background: #F9F7F7;
-  padding: 50px; 
-  margin: 20px;
+  padding: 50px;
 }
 
-.video {
-  width: 100%;
-  height: auto;
-  max-width: 100%;
+button:hover {
+  background-color: #9a8678;
+}
+
+button.cancel {
+  background-color: #6c757d;
+}
+
+button.cancel:hover {
+  background-color: #5a6268;
+}
+
+body {
+  Background: #E6E6E6;
+}
+
+
+.btn-primary {
+  background-color: #8e7051;
+  border-color: #6e533d;
+}
+
+.btn-primary:hover {
+  background-color: #9a8678;
+  color: black;
+  border-color: #6e533d;
+}
+
+.btn-secondary {
+  background-color: #8e7051;
+  border-color: #6e533d;
+}
+
+.button-group .btn-primary {
+  background-color: #8e7051;
+  border-color: #6e533d;
+}
+
+button {
+  margin-top: 15px;
+  padding: 8px 12px;
+  background-color: #8e7051;
+  border-color: #6e533d;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
 }

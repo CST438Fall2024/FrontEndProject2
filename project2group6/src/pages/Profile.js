@@ -124,7 +124,7 @@ function Profile() {
               <p><strong>Username:</strong> {user.username}</p>
               <button onClick={handleEditClick}>Edit</button>
               <button onClick={handleLogout}>Logout</button>
-              <button onClick={handleDeleteAccount} style={{ color: 'red' }}>Delete Account</button>
+              <button onClick={handleDeleteAccount} className='btn-delete'>Delete Account</button>
             </div>
           )}
         </div>

@@ -1,45 +1,85 @@
 .profileContainer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 40vh;
-  }
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 40vh;
   
-  .profileCard {
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    padding: 20px;
-    text-align: center;
-    width: 300px;
-    margin: 0 auto;
-  }
-  
-  .profileField {
-    margin-bottom: 15px;
-  }
-  
-  button {
-    margin-top: 15px;
-    padding: 8px 12px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  button:hover {
-    background-color: #0056b3;
-  }
-  
-  button.cancel {
-    background-color: #6c757d;
-  }
-  
-  button.cancel:hover {
-    background-color: #5a6268;
-  }
+}
 
-  body{
-    background-color: #E4E0E1,
-  }
+.profileCard {
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+  width: 300px;
+  margin: 0 auto;
+  background-color: white;
+}
+
+.profileField {
+  margin-bottom: 15px;
+}
+
+body {
+  Background: #E6E6E6;
+}
+
+
+button {
+  margin-top: 15px;
+  padding: 8px 12px;
+  background-color: #8e7051;
+  border-color: #6e533d;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  color: white;
+}
+
+button:hover {
+  background-color: #9a8678;
+  color: black;
+}
+
+button.cancel {
+  background-color: #6c757d;
+}
+
+button.cancel:hover {
+  background-color: #5a6268;
+}
+
+body {
+  background-color: #E4E0E1,
+}
+
+.btn-primary {
+  background-color: #8e7051;
+  border-color: #6e533d;
+}
+
+.btn-primary:hover {
+  background-color: #9a8678;
+  color: black;
+  border-color: #6e533d;
+}
+
+.btn-secondary {
+  background-color: #8e7051;
+  border-color: #6e533d;
+}
+
+.button-group .btn-primary {
+  background-color: #8e7051;
+  border-color: #6e533d;
+}
+
+.btn-delete{
+  color: #FAEBD7;
+  background-color: #C1443A;
+  transition: background-color 0.3s;
+}
+
+.btn-delete:hover{
+  background-color: #D0534A;
+}
